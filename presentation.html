@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Presentasi Melati Gold Shop: Mei – September 2025</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      :root {
+        --gold-color: #d4af37;
+        --gold-light: rgba(212, 175, 55, 0.1);
+        --gold-medium: rgba(212, 175, 55, 0.3);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        overflow: hidden;
+        background-color: #f9f9f9;
+      }
+
+      .presentation-container {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .slides-wrapper {
+        display: flex;
+        width: 700vw;
+        height: 100vh;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .slide {
+        width: 100vw;
+        height: 100vh;
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+        opacity: 0.3;
+        transform: scale(0.95);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      .slide.active {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .slide.active .bento-item,
+      .slide.active .metric-card,
+      .slide.active .insight-card {
+        animation: fadeInUp 0.6s ease forwards;
+      }
+
+      .slide.active .bento-item:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .slide.active .bento-item:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .slide.active .bento-item:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .slide.active .bento-item:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+
+      .slide.active .metric-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .slide.active .metric-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .slide.active .metric-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      .slide.active .insight-card:nth-child(1) {
+        animation-delay: 0.5s;
+      }
+      .slide.active .insight-card:nth-child(2) {
+        animation-delay: 0.6s;
+      }
+      .slide.active .insight-card:nth-child(3) {
+        animation-delay: 0.7s;
+      }
+
+      .slide.active .card {
+        animation: fadeInUp 0.8s ease forwards;
+        animation-delay: 0.3s;
+      }
+
+      .slide.active h1,
+      .slide.active h2 {
+        animation: fadeInLeft 0.8s ease forwards;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .background-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(var(--gold-color) 1px, transparent 1px);
+        background-size: 30px 30px;
+        opacity: 0.05;
+        z-index: 1;
+      }
+
+      .gold-accent {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: clamp(120px, 15vw, 200px);
+        height: clamp(120px, 15vw, 200px);
+        background: radial-gradient(circle, var(--gold-medium) 0%, transparent 70%);
+        border-radius: 50%;
+        z-index: 1;
+      }
+
+      .title {
+        font-family: "Playfair Display", serif;
+        font-weight: 700;
+        color: var(--gold-color);
+        line-height: 1.2;
+      }
+
+      .subtitle {
+        font-weight: 400;
+        color: #666;
+      }
+
+      .metric-card,
+      .bento-item,
+      .insight-card {
+        background-color: white;
+        border-radius: clamp(8px, 1vw, 12px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid var(--gold-color);
+        transition: transform 0.3s ease;
+      }
+
+      .bento-item:hover,
+      .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px var(--gold-medium);
+      }
+
+      .bento-item-title,
+      .metric-title {
+        color: #666;
+      }
+
+      .bento-item-value,
+      .metric-value {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .highlight {
+        color: var(--gold-color);
+        font-weight: 600;
+      }
+
+      .table {
+        font-size: clamp(11px, 1.2vw, 14px);
+      }
+
+      .table thead {
+        background-color: var(--gold-light);
+      }
+
+      .table th {
+        border-bottom: 2px solid var(--gold-medium);
+        color: #333;
+        font-weight: 600;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .table td {
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .month-row {
+        background-color: var(--gold-light);
+      }
+
+      .month-row td {
+        font-weight: 600;
+        color: var(--gold-color);
+      }
+
+      .chart-wrapper {
+        position: relative;
+        height: clamp(200px, 35vh, 280px);
+      }
+
+      .data-badge {
+        display: inline-flex;
+        align-items: center;
+        background-color: var(--gold-light);
+        border-radius: 20px;
+        padding: clamp(2px, 0.3vh, 3px) clamp(6px, 0.8vw, 10px);
+        margin-right: 5px;
+        margin-bottom: 5px;
+        font-size: clamp(10px, 1vw, 13px);
+        font-weight: 500;
+      }
+
+      .data-badge i {
+        color: var(--gold-color);
+        margin-right: 5px;
+      }
+
+      .trend-up {
+        color: #4caf50;
+      }
+
+      .trend-down {
+        color: #f44336;
+      }
+
+      @media (max-width: 1024px) {
+        .slides-wrapper {
+          width: 700vw;
+        }
+      }
+
+      .discussion-question {
+        background-color: white;
+        border-radius: clamp(8px, 1vw, 12px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid var(--gold-color);
+        padding: clamp(12px, 1.5vw, 20px);
+        margin-bottom: clamp(10px, 1.2vw, 16px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      .slide.active .discussion-question {
+        animation: fadeInUp 0.6s ease forwards;
+      }
+
+      .slide.active .discussion-question:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .slide.active .discussion-question:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .slide.active .discussion-question:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .slide.active .discussion-question:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+      .slide.active .discussion-question:nth-child(5) {
+        animation-delay: 0.5s;
+      }
+      .slide.active .discussion-question:nth-child(6) {
+        animation-delay: 0.6s;
+      }
+      .slide.active .discussion-question:nth-child(7) {
+        animation-delay: 0.7s;
+      }
+      .slide.active .discussion-question:nth-child(8) {
+        animation-delay: 0.8s;
+      }
+
+      .discussion-question:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px var(--gold-medium);
+      }
+
+      .discussion-question-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: clamp(24px, 3vw, 32px);
+        height: clamp(24px, 3vw, 32px);
+        background-color: var(--gold-color);
+        color: white;
+        border-radius: 50%;
+        font-weight: 600;
+        font-size: clamp(12px, 1.4vw, 16px);
+        margin-right: clamp(8px, 1vw, 12px);
+        flex-shrink: 0;
+      }
+
+      .discussion-question-text {
+        flex: 1;
+        font-size: clamp(13px, 1.4vw, 18px);
+        line-height: 1.6;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="presentation-container">
+      <div class="slides-wrapper" id="slidesWrapper">
+        <!-- SLIDE 1: Overview Kadar Muda -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="gold-accent"></div>
+          <div class="container-fluid h-100 position-relative" style="z-index: 2">
+            <div class="row h-100 align-items-center">
+              <div class="col-lg-6 px-5">
+                <div class="mb-4">
+                  <img
+                    src="https://z-cdn-media.chatglm.cn/files/027b7cbe-3a4a-42c8-ac0d-5656a362f92e_logo.png?auth_key=1792894321-e99502d1c22545c7950ef189b3e021f7-0-6f33a2c11e37d03d01f122069059317d"
+                    alt="Melati Gold Shop Logo"
+                    style="max-width: clamp(120px, 15vw, 200px)"
+                  />
+                </div>
+                <h1 class="title" style="font-size: clamp(32px, 4.5vw, 60px)">Rekapitulasi Kinerja Melati Young</h1>
+                <h2 class="subtitle mt-3" style="font-size: clamp(14px, 1.5vw, 20px)">Mei – September 2025</h2>
+              </div>
+              <div class="col-lg-6 px-5">
+                <div class="row g-4">
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">
+                        Total Penjualan
+                      </div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">50.68 Miliar</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">
+                        Total Berat Terjual
+                      </div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">53.140 gram</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">Total Buyback</div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">21.43 Miliar</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">
+                        Total Berat Buyback
+                      </div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">29.936 gram</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: Data Table Kadar Muda -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="d-flex flex-column h-100 position-relative" style="z-index: 2">
+            <div class="px-5 py-4">
+              <h1 class="title" style="font-size: clamp(28px, 3.5vw, 40px)">
+                Ringkasan Data Utama per Bulan (Mei–September 2025)
+              </h1>
+            </div>
+            <div class="flex-grow-1 px-5 pb-4 overflow-auto">
+              <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">TOTAL PENJUALAN</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">50.68 M</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Mei-September 2025</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">TOTAL BERAT TERJUAL</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">53.140 g</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Mei-September 2025</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">TOTAL INPUT BARANG</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">59.289 g</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Mei-September 2025</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                      <thead>
+                        <tr>
+                          <th>Bulan</th>
+                          <th>Penjualan (Rp)</th>
+                          <th>Berat Terjual (g)</th>
+                          <th>Buyback (Rp)</th>
+                          <th>Berat Buyback (g)</th>
+                          <th style="background-color: var(--gold-light); font-weight: 700">Total Input (g)</th>
+                          <th>Barang Cucian (g)</th>
+                          <th>Barang Baru (g)</th>
+                          <th>Salah Input (g)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="month-row">
+                          <td>Mei 2025</td>
+                          <td>9.27B</td>
+                          <td>8.331</td>
+                          <td>4.40B</td>
+                          <td>6.474</td>
+                          <td style="background-color: var(--gold-light); font-weight: 700; color: var(--gold-color)">
+                            10.630
+                          </td>
+                          <td>4.623</td>
+                          <td>6.005</td>
+                          <td>1.12</td>
+                        </tr>
+                        <tr>
+                          <td>Jun 2025</td>
+                          <td>9.66B</td>
+                          <td>10.483</td>
+                          <td>4.13B</td>
+                          <td>5.870</td>
+                          <td style="background-color: var(--gold-light); font-weight: 700; color: var(--gold-color)">
+                            11.249
+                          </td>
+                          <td>5.855</td>
+                          <td>5.391</td>
+                          <td>2.36</td>
+                        </tr>
+                        <tr>
+                          <td>Jul 2025</td>
+                          <td>10.45B</td>
+                          <td>11.722</td>
+                          <td>4.18B</td>
+                          <td>5.897</td>
+                          <td style="background-color: var(--gold-light); font-weight: 700; color: var(--gold-color)">
+                            10.872
+                          </td>
+                          <td>3.051</td>
+                          <td>7.806</td>
+                          <td>15.08</td>
+                        </tr>
+                        <tr>
+                          <td>Aug 2025</td>
+                          <td>11.10B</td>
+                          <td>12.231</td>
+                          <td>4.40B</td>
+                          <td>6.039</td>
+                          <td style="background-color: var(--gold-light); font-weight: 700; color: var(--gold-color)">
+                            14.852
+                          </td>
+                          <td>6.011</td>
+                          <td>8.797</td>
+                          <td>44.82</td>
+                        </tr>
+                        <tr>
+                          <td>Sep 2025</td>
+                          <td>10.20B</td>
+                          <td>10.372</td>
+                          <td>4.32B</td>
+                          <td>5.656</td>
+                          <td style="background-color: var(--gold-light); font-weight: 700; color: var(--gold-color)">
+                            10.687
+                          </td>
+                          <td>6.130</td>
+                          <td>4.541</td>
+                          <td>15.85</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(13px, 1.4vw, 16px)">
+                      <i class="fas fa-chart-line me-2"></i>
+                      TREN PENJUALAN
+                    </div>
+                    <div style="font-size: clamp(11px, 1.2vw, 14px); line-height: 1.4">
+                      <span class="data-badge">
+                        <i class="fas fa-arrow-up"></i>
+                        Agustus
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-arrow-down"></i>
+                        September
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Penjualan
+                        <span class="highlight">tertinggi</span>
+                        di Agustus (11.1 M)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(13px, 1.4vw, 16px)">
+                      <i class="fas fa-balance-scale me-2"></i>
+                      KORELASI INPUT
+                    </div>
+                    <div style="font-size: clamp(11px, 1.2vw, 14px); line-height: 1.4">
+                      <span class="data-badge">
+                        <i class="fas fa-check-circle"></i>
+                        Sejalan
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-chart-area"></i>
+                        +39.7%
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Input barang
+                        <span class="highlight">sejajar</span>
+                        dengan penjualan
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(13px, 1.4vw, 16px)">
+                      <i class="fas fa-exchange-alt me-2"></i>
+                      PERBANDINGAN BARANG
+                    </div>
+                    <div style="font-size: clamp(11px, 1.2vw, 14px); line-height: 1.4">
+                      <span class="data-badge">
+                        <i class="fas fa-sort-up"></i>
+                        Cucian
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-sort-down"></i>
+                        Baru
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Proporsi cucian
+                        <span class="highlight">meningkat</span>
+                        43% → 57%
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Charts Kadar Muda -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="d-flex flex-column h-100 position-relative" style="z-index: 2">
+            <div class="px-5 py-4">
+              <h1 class="title" style="font-size: clamp(28px, 3.5vw, 40px)">Analisis Korelasi: Mei - September 2025</h1>
+            </div>
+            <div class="flex-grow-1 px-5 pb-4 overflow-auto">
+              <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(12px, 1.3vw, 16px)">KORELASI TERTINGGI</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(20px, 2.3vw, 28px)">Agustus</div>
+                    <div class="trend-up mt-2" style="font-size: clamp(11px, 1.2vw, 14px)">
+                      <i class="fas fa-arrow-up me-1"></i>
+                      Penjualan & Input
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(12px, 1.3vw, 16px)">RATA-RATA RASIO</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(20px, 2.3vw, 28px)">0.96</div>
+                    <div class="text-muted mt-2" style="font-size: clamp(11px, 1.2vw, 14px)">
+                      <i class="fas fa-balance-scale me-1"></i>
+                      Penjualan/Input
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(12px, 1.3vw, 16px)">BARANG CUCIAN</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(20px, 2.3vw, 28px)">+197%</div>
+                    <div class="trend-up mt-2" style="font-size: clamp(11px, 1.2vw, 14px)">
+                      <i class="fas fa-arrow-up me-1"></i>
+                      Mei ke September
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row g-3 mb-4 flex-grow-1">
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h5 class="card-title" style="font-size: clamp(16px, 1.8vw, 22px)">
+                        <i class="fas fa-chart-line me-2" style="color: var(--gold-color)"></i>
+                        Penjualan vs Total Input Barang
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="salesInputChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h5 class="card-title" style="font-size: clamp(16px, 1.8vw, 22px)">
+                        <i class="fas fa-chart-pie me-2" style="color: var(--gold-color)"></i>
+                        Komposisi Input Barang
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="compositionChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(14px, 1.5vw, 18px)">
+                      <i class="fas fa-sync-alt me-2"></i>
+                      KORELASI POSITIF
+                    </div>
+                    <div style="font-size: clamp(12px, 1.3vw, 16px); line-height: 1.5">
+                      <span class="data-badge">
+                        <i class="fas fa-check-circle"></i>
+                        Agustus
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-check-circle"></i>
+                        Juli
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Penjualan & input bergerak
+                        <span class="highlight">searah</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(14px, 1.5vw, 18px)">
+                      <i class="fas fa-exchange-alt me-2"></i>
+                      PERUBAHAN KOMPOSISI
+                    </div>
+                    <div style="font-size: clamp(12px, 1.3vw, 16px); line-height: 1.5">
+                      <span class="data-badge">
+                        <i class="fas fa-sort-up"></i>
+                        Cucian
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-sort-down"></i>
+                        Baru
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Cucian
+                        <span class="highlight">meningkat</span>
+                        43% → 57%
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(14px, 1.5vw, 18px)">
+                      <i class="fas fa-lightbulb me-2"></i>
+                      IMPLIKASI BISNIS
+                    </div>
+                    <div style="font-size: clamp(12px, 1.3vw, 16px); line-height: 1.5">
+                      <span class="data-badge">
+                        <i class="fas fa-coins"></i>
+                        Efisiensi
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-recycle"></i>
+                        Rotasi
+                      </span>
+                      <p class="mb-0 mt-2">
+                        <span class="highlight">Efisiensi</span>
+                        siklus &
+                        <span class="highlight">loyalitas</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Overview Kadar Tua -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="gold-accent"></div>
+          <div class="container-fluid h-100 position-relative" style="z-index: 2">
+            <div class="row h-100 align-items-center">
+              <div class="col-lg-6 px-5">
+                <div class="mb-4">
+                  <img
+                    src="https://z-cdn-media.chatglm.cn/files/027b7cbe-3a4a-42c8-ac0d-5656a362f92e_logo.png?auth_key=1792894321-e99502d1c22545c7950ef189b3e021f7-0-6f33a2c11e37d03d01f122069059317d"
+                    alt="Melati Gold Shop Logo"
+                    style="max-width: clamp(120px, 15vw, 200px)"
+                  />
+                </div>
+                <h1 class="title" style="font-size: clamp(32px, 4.5vw, 60px)">Rekapitulasi Kinerja Melati Gold</h1>
+                <h2 class="subtitle mt-3" style="font-size: clamp(14px, 1.5vw, 20px)">Mei – September 2025</h2>
+              </div>
+              <div class="col-lg-6 px-5">
+                <div class="row g-4">
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">
+                        Penjualan Perhiasan
+                      </div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">156.92 Miliar</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">
+                        Berat Perhiasan
+                      </div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">104.785 gram</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">Penjualan LM</div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">120.68 Miliar</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">Berat LM</div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">52.893 gram</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 5: Data Table Kadar Tua -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="d-flex flex-column h-100 position-relative" style="z-index: 2">
+            <div class="px-5 py-4">
+              <h1 class="title" style="font-size: clamp(28px, 3.5vw, 40px)">
+                Ringkasan Data Utama per Bulan (Mei–September 2025)
+              </h1>
+            </div>
+            <div class="flex-grow-1 px-5 pb-4 overflow-auto">
+              <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">
+                      TOTAL PENJUALAN PERHIASAN
+                    </div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">104.785 gram</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Mei-September 2025</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">TOTAL PENJUALAN LM</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">52.894 gram</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Mei-September 2025</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">TOTAL PEMBELIAN</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">72.68 M</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Mei-September 2025</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                      <thead>
+                        <tr>
+                          <th>Bulan</th>
+                          <th>LM (Rp)</th>
+                          <th>
+                            Berat
+                            <br />
+                            LM (g)
+                          </th>
+                          <th>
+                            Perhiasan
+                            <br />
+                            (Rp)
+                          </th>
+                          <th>
+                            Perhiasan
+                            <br />
+                            (g)
+                          </th>
+                          <th>
+                            Buyback
+                            <br />
+                            (Rp)
+                          </th>
+                          <th>
+                            Buyback
+                            <br />
+                            (g)
+                          </th>
+                          <th style="background-color: var(--gold-light); font-weight: 700">
+                            Total Input
+                            <br />
+                            Perhiasan (g)
+                          </th>
+                          <th>
+                            Cucian
+                            <br />
+                            (g)
+                          </th>
+                          <th>
+                            Baru
+                            <br />
+                            (g)
+                          </th>
+                          <th>
+                            LM
+                            <br />
+                            (g)
+                          </th>
+                          <th>Diamond</th>
+                          <th>SI</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr class="month-row">
+                          <td>Mei 2025</td>
+                          <td>18.17B</td>
+                          <td>9.209</td>
+                          <td>28.45B</td>
+                          <td>19.689</td>
+                          <td>14.43B</td>
+                          <td>12.500</td>
+                          <td style="background-color: var(--gold-light); font-weight: 600; color: var(--gold-color)">
+                            21.654
+                          </td>
+                          <td>10.769</td>
+                          <td>10.885</td>
+                          <td>11.282</td>
+                          <td>–</td>
+                          <td>87.16</td>
+                        </tr>
+                        <tr>
+                          <td>Jun 2025</td>
+                          <td>20.65B</td>
+                          <td>10.629</td>
+                          <td>29.43B</td>
+                          <td>19.702</td>
+                          <td>14.46B</td>
+                          <td>12.210</td>
+                          <td style="background-color: var(--gold-light); font-weight: 600; color: var(--gold-color)">
+                            19.542
+                          </td>
+                          <td>9.395</td>
+                          <td>10.147</td>
+                          <td>10.273</td>
+                          <td>517.02</td>
+                          <td>191.34</td>
+                        </tr>
+                        <tr>
+                          <td>Jul 2025</td>
+                          <td>20.84B</td>
+                          <td>10.304</td>
+                          <td>31.31B</td>
+                          <td>21.439</td>
+                          <td>14.26B</td>
+                          <td>12.170</td>
+                          <td style="background-color: var(--gold-light); font-weight: 600; color: var(--gold-color)">
+                            24.135
+                          </td>
+                          <td>8.708</td>
+                          <td>15.427</td>
+                          <td>9.996</td>
+                          <td>362.18</td>
+                          <td>55.17</td>
+                        </tr>
+                        <tr>
+                          <td>Aug 2025</td>
+                          <td>27.33B</td>
+                          <td>8.146</td>
+                          <td>35.17B</td>
+                          <td>23.620</td>
+                          <td>14.66B</td>
+                          <td>12.281</td>
+                          <td style="background-color: var(--gold-light); font-weight: 600; color: var(--gold-color)">
+                            26.552
+                          </td>
+                          <td>10.563</td>
+                          <td>15.989</td>
+                          <td>14.826</td>
+                          <td>–</td>
+                          <td>23.26</td>
+                        </tr>
+                        <tr>
+                          <td>Sep 2025</td>
+                          <td>33.89B</td>
+                          <td>14.606</td>
+                          <td>32.56B</td>
+                          <td>20.335</td>
+                          <td>14.87B</td>
+                          <td>11.948</td>
+                          <td style="background-color: var(--gold-light); font-weight: 600; color: var(--gold-color)">
+                            17.656
+                          </td>
+                          <td>8.746</td>
+                          <td>8.910</td>
+                          <td>15.692</td>
+                          <td>232.58</td>
+                          <td>406.18</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">TOTAL INPUT PERHIASAN</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">109.539 gram</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Mei-September 2025</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">TOTAL INPUT LM</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">62.069 gram</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Mei-September 2025</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">TOTAL PEMBELIAN</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">61.109 gram</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Mei-September 2025</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: Charts Kadar Tua -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="d-flex flex-column h-100 position-relative" style="z-index: 2">
+            <div class="px-5 py-4">
+              <h1 class="title" style="font-size: clamp(28px, 3.5vw, 40px)">
+                Analisis Korelasi: Input Barang vs Berat Penjualan
+              </h1>
+            </div>
+            <div class="flex-grow-1 px-5 pb-4 overflow-auto">
+              <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(12px, 1.3vw, 16px)">KORELASI TERTINGGI</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(20px, 2.3vw, 28px)">September</div>
+                    <div class="trend-up mt-2" style="font-size: clamp(11px, 1.2vw, 14px)">
+                      <i class="fas fa-arrow-up me-1"></i>
+                      Barang Baru
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(12px, 1.3vw, 16px)">RATA-RATA RASIO</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(20px, 2.3vw, 28px)">1.24</div>
+                    <div class="text-muted mt-2" style="font-size: clamp(11px, 1.2vw, 14px)">
+                      <i class="fas fa-balance-scale me-1"></i>
+                      Berat/Input
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(12px, 1.3vw, 16px)">TREN POSITIF</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(20px, 2.3vw, 28px)">+197%</div>
+                    <div class="trend-up mt-2" style="font-size: clamp(11px, 1.2vw, 14px)">
+                      <i class="fas fa-arrow-up me-1"></i>
+                      Barang Cucian
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row g-3 mb-4 flex-grow-1">
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h5 class="card-title" style="font-size: clamp(16px, 1.8vw, 22px)">
+                        <i class="fas fa-box-open me-2" style="color: var(--gold-color)"></i>
+                        Input Barang Baru vs Berat Penjualan
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="newItemsChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h5 class="card-title" style="font-size: clamp(16px, 1.8vw, 22px)">
+                        <i class="fas fa-balance-scale me-2" style="color: var(--gold-color)"></i>
+                        Perbandingan Barang Cucian vs Barang Baru
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="comparisonChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(14px, 1.5vw, 18px)">
+                      <i class="fas fa-box-open me-2"></i>
+                      BARANG BARU
+                    </div>
+                    <div style="font-size: clamp(12px, 1.3vw, 16px); line-height: 1.5">
+                      <span class="data-badge">
+                        <i class="fas fa-check-circle"></i>
+                        September
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-arrow-up"></i>
+                        +41%
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Input barang baru
+                        <span class="highlight">sejajar</span>
+                        dengan berat penjualan
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(14px, 1.5vw, 18px)">
+                      <i class="fas fa-balance-scale me-2"></i>
+                      PERBANDINGAN
+                    </div>
+                    <div style="font-size: clamp(12px, 1.3vw, 16px); line-height: 1.5">
+                      <span class="data-badge">
+                        <i class="fas fa-chart-bar"></i>
+                        Agustus
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-chart-line"></i>
+                        September
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Agustus:
+                        <span class="highlight">barang baru</span>
+                        , Sept:
+                        <span class="highlight">cucian</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(14px, 1.5vw, 18px)">
+                      <i class="fas fa-lightbulb me-2"></i>
+                      IMPLIKASI BISNIS
+                    </div>
+                    <div style="font-size: clamp(12px, 1.3vw, 16px); line-height: 1.5">
+                      <span class="data-badge">
+                        <i class="fas fa-chart-pie"></i>
+                        Rasio 1.24
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-sync-alt"></i>
+                        Efisiensi
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Setiap gram input =
+                        <span class="highlight">1.24x</span>
+                        penjualan
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 7: Discussion Questions -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="gold-accent"></div>
+          <div class="d-flex flex-column h-100 position-relative" style="z-index: 2">
+            <div class="px-5 py-4">
+              <h1 class="title" style="font-size: clamp(28px, 3.5vw, 40px)">
+                <i class="fas fa-comments me-3" style="color: var(--gold-color)"></i>
+                Bahan Diskusi
+              </h1>
+              <p class="subtitle mt-2" style="font-size: clamp(13px, 1.4vw, 18px)">
+                Mari kita bahas bersama untuk meningkatkan efisiensi operasional
+              </p>
+            </div>
+            <div class="flex-grow-1 px-5 pb-4 overflow-auto">
+              <div class="discussion-question d-flex align-items-start">
+                <div class="discussion-question-number">1</div>
+                <div class="discussion-question-text">
+                  Apakah setiap barang yang diinput sudah langsung siap dipajang dan dijual, atau ada jeda waktu yang
+                  dapat dipangkas untuk mempercepat rotasi stok?
+                </div>
+              </div>
+
+              <div class="discussion-question d-flex align-items-start">
+                <div class="discussion-question-number">2</div>
+                <div class="discussion-question-text">
+                  Apakah dibutuhkan standar operasional input (SOP) baru agar data stok lebih konsisten dan mudah
+                  dianalisis?
+                </div>
+              </div>
+
+              <div class="discussion-question d-flex align-items-start">
+                <div class="discussion-question-number">3</div>
+                <div class="discussion-question-text">
+                  Apakah proporsi antara barang baru dan barang cucian saat ini sudah ideal untuk mendukung penjualan?
+                </div>
+              </div>
+
+              <div class="discussion-question d-flex align-items-start">
+                <div class="discussion-question-number">4</div>
+                <div class="discussion-question-text">
+                  Apakah barang cucian tertentu menumpuk terlalu lama di stok? Jika ya, bagaimana strategi agar bisa
+                  segera terjual (misalnya promosi, bundling, atau penataan ulang display)?
+                </div>
+              </div>
+
+              <div class="discussion-question d-flex align-items-start">
+                <div class="discussion-question-number">5</div>
+                <div class="discussion-question-text">
+                  Perlukah ditetapkan rasio tetap antara barang baru dan cucian sebagai acuan input bulanan agar
+                  komposisi stok lebih terkendali?
+                </div>
+              </div>
+
+              <div class="discussion-question d-flex align-items-start">
+                <div class="discussion-question-number">6</div>
+                <div class="discussion-question-text">Apakah proporsi barang baru dan cucian saat ini sudah ideal?</div>
+              </div>
+
+              <div class="discussion-question d-flex align-items-start">
+                <div class="discussion-question-number">7</div>
+                <div class="discussion-question-text">
+                  Bagaimana strategi mempercepat rotasi stok barang cucian yang lambat terjual?
+                </div>
+              </div>
+
+              <div class="discussion-question d-flex align-items-start">
+                <div class="discussion-question-number">8</div>
+                <div class="discussion-question-text">
+                  Apa langkah konkret untuk menyesuaikan input barang dengan tren penjualan?
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      let currentSlideIndex = 0;
+      const totalSlides = 7;
+      const slidesWrapper = document.getElementById("slidesWrapper");
+      let chartsInitialized = { slide3: false, slide6: false };
+
+      function initCharts3() {
+        if (chartsInitialized.slide3) return;
+
+        const months = ["Mei", "Juni", "Juli", "Agustus", "September"];
+        const salesData = [9.27, 9.66, 10.45, 11.1, 10.2];
+        const totalInputData = [10.63, 11.25, 10.87, 14.85, 10.69];
+        const usedItemsData = [4.62, 5.85, 3.05, 6.01, 6.13];
+        const newItemsData = [6.01, 5.39, 7.81, 8.8, 4.54];
+
+        new Chart(document.getElementById("salesInputChart").getContext("2d"), {
+          type: "bar",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: "Penjualan (Miliar Rp)",
+                data: salesData,
+                backgroundColor: "rgba(212, 175, 55, 0.7)",
+                borderColor: "rgba(212, 175, 55, 1)",
+                borderWidth: 1,
+                yAxisID: "y",
+              },
+              {
+                label: "Total Input Barang (kg)",
+                data: totalInputData,
+                type: "line",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 3,
+                pointBackgroundColor: "rgba(75, 192, 192, 1)",
+                pointRadius: 6,
+                fill: false,
+                yAxisID: "y1",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true, position: "left", title: { display: true, text: "Penjualan (Miliar Rp)" } },
+              y1: {
+                beginAtZero: true,
+                position: "right",
+                title: { display: true, text: "Total Input Barang (kg)" },
+                grid: { drawOnChartArea: false },
+              },
+            },
+            plugins: { legend: { position: "top" } },
+          },
+        });
+
+        new Chart(document.getElementById("compositionChart").getContext("2d"), {
+          type: "bar",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: "Barang Cucian (kg)",
+                data: usedItemsData,
+                backgroundColor: "rgba(153, 102, 255, 0.7)",
+                borderColor: "rgba(153, 102, 255, 1)",
+                borderWidth: 1,
+              },
+              {
+                label: "Barang Baru (kg)",
+                data: newItemsData,
+                backgroundColor: "rgba(255, 159, 64, 0.7)",
+                borderColor: "rgba(255, 159, 64, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true, title: { display: true, text: "Berat (kg)" } } },
+            plugins: { legend: { position: "top" } },
+          },
+        });
+
+        chartsInitialized.slide3 = true;
+      }
+
+      function initCharts6() {
+        if (chartsInitialized.slide6) return;
+
+        const months = ["Mei", "Juni", "Juli", "Agustus", "September"];
+        const newItemsInputData = [10.885, 10.147, 15.427, 15.989, 8.91];
+        const newItemsWeightData = [6.005, 5.391, 7.806, 8.797, 4.541];
+        const usedItemsInputData = [10.769, 9.395, 8.708, 10.563, 8.746];
+
+        new Chart(document.getElementById("newItemsChart").getContext("2d"), {
+          type: "bar",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: "Input Barang Baru (kg)",
+                data: newItemsInputData,
+                backgroundColor: "rgba(153, 102, 255, 0.7)",
+                borderColor: "rgba(153, 102, 255, 1)",
+                borderWidth: 1,
+                yAxisID: "y",
+              },
+              {
+                label: "Berat Penjualan (kg)",
+                data: newItemsWeightData,
+                type: "line",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 3,
+                pointBackgroundColor: "rgba(75, 192, 192, 1)",
+                pointRadius: 6,
+                fill: false,
+                yAxisID: "y1",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { beginAtZero: true, position: "left", title: { display: true, text: "Input Barang Baru (kg)" } },
+              y1: {
+                beginAtZero: true,
+                position: "right",
+                title: { display: true, text: "Berat Penjualan (kg)" },
+                grid: { drawOnChartArea: false },
+              },
+            },
+            plugins: { legend: { position: "top" } },
+          },
+        });
+
+        new Chart(document.getElementById("comparisonChart").getContext("2d"), {
+          type: "bar",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: "Barang Cucian (kg)",
+                data: usedItemsInputData,
+                backgroundColor: "rgba(212, 175, 55, 0.7)",
+                borderColor: "rgba(212, 175, 55, 1)",
+                borderWidth: 1,
+              },
+              {
+                label: "Barang Baru (kg)",
+                data: newItemsInputData,
+                backgroundColor: "rgba(153, 102, 255, 0.7)",
+                borderColor: "rgba(153, 102, 255, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true, title: { display: true, text: "Berat (kg)" } } },
+            plugins: { legend: { position: "top" } },
+          },
+        });
+
+        chartsInitialized.slide6 = true;
+      }
+
+      function changeSlide(direction) {
+        const newIndex = currentSlideIndex + direction;
+        if (newIndex >= 0 && newIndex < totalSlides) {
+          currentSlideIndex = newIndex;
+          updateSlide();
+        }
+      }
+
+      function goToSlide(index) {
+        if (index >= 0 && index < totalSlides) {
+          currentSlideIndex = index;
+          updateSlide();
+        }
+      }
+
+      function updateSlide() {
+        slidesWrapper.style.transform = `translateX(-${currentSlideIndex * 100}vw)`;
+
+        // Remove active class from all slides
+        document.querySelectorAll(".slide").forEach((slide) => slide.classList.remove("active"));
+
+        // Add active class to current slide
+        const currentSlide = document.querySelectorAll(".slide")[currentSlideIndex];
+        setTimeout(() => currentSlide.classList.add("active"), 50);
+
+        if (currentSlideIndex === 2) setTimeout(initCharts3, 100);
+        if (currentSlideIndex === 5) setTimeout(initCharts6, 100);
+      }
+
+      document.addEventListener("keydown", (e) => {
+        switch (e.key) {
+          case "ArrowLeft":
+          case "PageUp":
+            changeSlide(-1);
+            break;
+          case "ArrowRight":
+          case "PageDown":
+          case " ":
+          case "Enter":
+            changeSlide(1);
+            break;
+          case "Home":
+            goToSlide(0);
+            break;
+          case "End":
+            goToSlide(totalSlides - 1);
+            break;
+          case "1":
+          case "2":
+          case "3":
+          case "4":
+          case "5":
+          case "6":
+          case "7":
+            goToSlide(parseInt(e.key) - 1);
+            break;
+        }
+      });
+
+      let touchStartX = 0;
+      document.addEventListener("touchstart", (e) => (touchStartX = e.changedTouches[0].screenX));
+      document.addEventListener("touchend", (e) => {
+        const diff = touchStartX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+      });
+
+      updateSlide();
+
+      // Set first slide as active on load
+      setTimeout(() => {
+        document.querySelectorAll(".slide")[0].classList.add("active");
+      }, 100);
+    </script>
+  </body>
+</html>

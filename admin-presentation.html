@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Melati Young: Juli – September 2025</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      :root {
+        --gold-color: #d4af37;
+        --gold-light: rgba(212, 175, 55, 0.1);
+        --gold-medium: rgba(212, 175, 55, 0.3);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        overflow: hidden;
+        background-color: #f9f9f9;
+      }
+
+      .presentation-container {
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .slides-wrapper {
+        display: flex;
+        width: 700vw;
+        height: 100vh;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .slide {
+        width: 100vw;
+        height: 100vh;
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+        opacity: 0.3;
+        transform: scale(0.95);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+      }
+
+      .slide.active {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .slide.active .bento-item,
+      .slide.active .metric-card,
+      .slide.active .insight-card {
+        animation: fadeInUp 0.6s ease forwards;
+      }
+
+      .slide.active .bento-item:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .slide.active .bento-item:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .slide.active .bento-item:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .slide.active .bento-item:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+
+      .slide.active .metric-card:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .slide.active .metric-card:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .slide.active .metric-card:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      .slide.active .insight-card:nth-child(1) {
+        animation-delay: 0.5s;
+      }
+      .slide.active .insight-card:nth-child(2) {
+        animation-delay: 0.6s;
+      }
+      .slide.active .insight-card:nth-child(3) {
+        animation-delay: 0.7s;
+      }
+
+      .slide.active .card {
+        animation: fadeInUp 0.8s ease forwards;
+        animation-delay: 0.3s;
+      }
+
+      .slide.active h1,
+      .slide.active h2 {
+        animation: fadeInLeft 0.8s ease forwards;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInLeft {
+        from {
+          opacity: 0;
+          transform: translateX(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .background-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: radial-gradient(var(--gold-color) 1px, transparent 1px);
+        background-size: 30px 30px;
+        opacity: 0.05;
+        z-index: 1;
+      }
+
+      .gold-accent {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: clamp(120px, 15vw, 200px);
+        height: clamp(120px, 15vw, 200px);
+        background: radial-gradient(circle, var(--gold-medium) 0%, transparent 70%);
+        border-radius: 50%;
+        z-index: 1;
+      }
+
+      .title {
+        font-family: "Playfair Display", serif;
+        font-weight: 700;
+        color: var(--gold-color);
+        line-height: 1.2;
+      }
+
+      .subtitle {
+        font-weight: 400;
+        color: #666;
+      }
+
+      .metric-card,
+      .bento-item,
+      .insight-card {
+        background-color: white;
+        border-radius: clamp(8px, 1vw, 12px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid var(--gold-color);
+        transition: transform 0.3s ease;
+      }
+
+      .bento-item:hover,
+      .metric-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px var(--gold-medium);
+      }
+
+      .bento-item-title,
+      .metric-title {
+        color: #666;
+      }
+
+      .bento-item-value,
+      .metric-value {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .highlight {
+        color: var(--gold-color);
+        font-weight: 600;
+      }
+
+      .table {
+        font-size: clamp(11px, 1.2vw, 14px);
+      }
+
+      .table thead {
+        background-color: var(--gold-light);
+      }
+
+      .table th {
+        border-bottom: 2px solid var(--gold-medium);
+        color: #333;
+        font-weight: 600;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .table td {
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .month-row {
+        background-color: var(--gold-light);
+      }
+
+      .month-row td {
+        font-weight: 600;
+        color: var(--gold-color);
+      }
+
+      .chart-wrapper {
+        position: relative;
+        height: clamp(250px, 40vh, 350px);
+      }
+
+      .data-badge {
+        display: inline-flex;
+        align-items: center;
+        background-color: var(--gold-light);
+        border-radius: 20px;
+        padding: clamp(2px, 0.3vh, 3px) clamp(6px, 0.8vw, 10px);
+        margin-right: 5px;
+        margin-bottom: 5px;
+        font-size: clamp(10px, 1vw, 13px);
+        font-weight: 500;
+      }
+
+      .data-badge i {
+        color: var(--gold-color);
+        margin-right: 5px;
+      }
+
+      .trend-up {
+        color: #4caf50;
+      }
+
+      .trend-down {
+        color: #f44336;
+      }
+
+      @media (max-width: 1024px) {
+        .slides-wrapper {
+          width: 700vw;
+        }
+      }
+
+      .discussion-question {
+        background-color: white;
+        border-radius: clamp(8px, 1vw, 12px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid var(--gold-color);
+        padding: clamp(16px, 2vw, 24px);
+        margin-bottom: clamp(14px, 1.6vw, 20px);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      .slide.active .discussion-question {
+        animation: fadeInUp 0.6s ease forwards;
+      }
+
+      .slide.active .discussion-question:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .slide.active .discussion-question:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .slide.active .discussion-question:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .slide.active .discussion-question:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+
+      .discussion-question:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px var(--gold-medium);
+      }
+
+      .discussion-question-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: clamp(28px, 3.5vw, 36px);
+        height: clamp(28px, 3.5vw, 36px);
+        background-color: var(--gold-color);
+        color: white;
+        border-radius: 50%;
+        font-weight: 600;
+        font-size: clamp(14px, 1.6vw, 18px);
+        margin-right: clamp(12px, 1.4vw, 16px);
+        flex-shrink: 0;
+      }
+
+      .discussion-question-text {
+        flex: 1;
+        font-size: clamp(14px, 1.5vw, 19px);
+        line-height: 1.7;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="presentation-container">
+      <div class="slides-wrapper" id="slidesWrapper">
+        <!-- SLIDE 1: Overview -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="gold-accent"></div>
+          <div class="container-fluid h-100 position-relative" style="z-index: 2">
+            <div class="row h-100 align-items-center">
+              <div class="col-lg-6 px-5">
+                <div class="mb-4">
+                  <img
+                    src="https://z-cdn-media.chatglm.cn/files/027b7cbe-3a4a-42c8-ac0d-5656a362f92e_logo.png?auth_key=1792894321-e99502d1c22545c7950ef189b3e021f7-0-6f33a2c11e37d03d01f122069059317d"
+                    alt="Melati Gold Shop Logo"
+                    style="max-width: clamp(120px, 15vw, 200px)"
+                  />
+                </div>
+                <h1 class="title" style="font-size: clamp(32px, 4.5vw, 60px)">Kinerja Admin Melati Young</h1>
+                <h2 class="subtitle mt-3" style="font-size: clamp(14px, 1.5vw, 20px)">Juli – September 2025</h2>
+                <p class="mt-4" style="font-size: clamp(13px, 1.3vw, 18px); color: #666; line-height: 1.6">
+                  Analisis kontribusi strategis dalam transaksi bernilai tinggi dan efektivitas penjualan di periode Q3
+                  2025
+                </p>
+              </div>
+              <div class="col-lg-6 px-5">
+                <div class="row g-4">
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">
+                        Rata-rata Transaksi
+                      </div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">753 Juta</div>
+                      <div class="text-muted mt-2" style="font-size: clamp(10px, 1vw, 12px)">Per Bulan</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">
+                        Rata-rata Kontribusi
+                      </div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">7.2%</div>
+                      <div class="text-muted mt-2" style="font-size: clamp(10px, 1vw, 12px)">Terhadap Total</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">Total Nominal</div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">2.26 Miliar</div>
+                      <div class="text-muted mt-2" style="font-size: clamp(10px, 1vw, 12px)">Jul-Sep 2025</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">Bulan Terbaik</div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">September</div>
+                      <div class="trend-up mt-2" style="font-size: clamp(10px, 1vw, 12px)">
+                        <i class="fas fa-arrow-up me-1"></i>
+                        8.4% Kontribusi
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 2: Data Table & Insights -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="d-flex flex-column h-100 position-relative" style="z-index: 2">
+            <div class="px-5 py-4">
+              <h1 class="title" style="font-size: clamp(28px, 3.5vw, 40px)">
+                Ringkasan Data per Bulan (Juli–September 2025)
+              </h1>
+            </div>
+            <div class="flex-grow-1 px-5 pb-4 overflow-auto">
+              <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">NOMINAL TERTINGGI</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">856 Juta</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">September 2025</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">KONTRIBUSI TERTINGGI</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">8.4%</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">September 2025</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">PENINGKATAN</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">+40%</div>
+                    <div class="trend-up mt-1" style="font-size: clamp(10px, 1vw, 12px)">
+                      <i class="fas fa-arrow-up me-1"></i>
+                      Agustus ke September
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                      <thead>
+                        <tr>
+                          <th>Bulan</th>
+                          <th>
+                            Nominal
+                            <br />
+                            Transaksi
+                          </th>
+                          <th>
+                            Total Penjualan
+                            <br />
+                            Keseluruhan
+                          </th>
+                          <th>
+                            Persentase
+                            <br />
+                            Kontribusi
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Juli 2025</td>
+                          <td>Rp 793,404,000</td>
+                          <td>Rp 10,454,020,000</td>
+                          <td>7.6%</td>
+                        </tr>
+                        <tr class="month-row">
+                          <td>Agustus 2025</td>
+                          <td>Rp 609,670,000</td>
+                          <td>Rp 11,100,243,000</td>
+                          <td>5.5%</td>
+                        </tr>
+                        <tr style="background-color: rgba(76, 175, 80, 0.1)">
+                          <td style="font-weight: 600; color: #4caf50">September 2025</td>
+                          <td style="font-weight: 600; color: #4caf50">Rp 856,218,000</td>
+                          <td>Rp 10,197,858,000</td>
+                          <td style="font-weight: 700; color: #4caf50">8.4%</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(13px, 1.4vw, 16px)">
+                      <i class="fas fa-chart-line me-2"></i>
+                      KINERJA FLUKTUATIF
+                    </div>
+                    <div style="font-size: clamp(11px, 1.2vw, 14px); line-height: 1.4">
+                      <span class="data-badge">
+                        <i class="fas fa-arrow-down"></i>
+                        Agustus
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-arrow-up"></i>
+                        September
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Meski nominal menurun di Agustus, kontribusi
+                        <span class="highlight">meningkat +40%</span>
+                        pada September
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(13px, 1.4vw, 16px)">
+                      <i class="fas fa-trophy me-2"></i>
+                      PERFORMA OPTIMAL
+                    </div>
+                    <div style="font-size: clamp(11px, 1.2vw, 14px); line-height: 1.4">
+                      <span class="data-badge">
+                        <i class="fas fa-star"></i>
+                        September
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-check-circle"></i>
+                        Adaptif
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Transaksi
+                        <span class="highlight">bernilai tinggi</span>
+                        di tengah penurunan total omzet toko
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="insight-card p-3">
+                    <div class="fw-bold mb-2" style="font-size: clamp(13px, 1.4vw, 16px)">
+                      <i class="fas fa-bullseye me-2"></i>
+                      STRATEGI EFEKTIF
+                    </div>
+                    <div style="font-size: clamp(11px, 1.2vw, 14px); line-height: 1.4">
+                      <span class="data-badge">
+                        <i class="fas fa-coins"></i>
+                        753M/bln
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-percentage"></i>
+                        7.2%
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Konsisten dalam
+                        <span class="highlight">transaksi bernilai tinggi</span>
+                        dengan rata-rata 7.2%
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Chart Analysis -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="d-flex flex-column h-100 position-relative" style="z-index: 2">
+            <div class="px-5 py-4">
+              <h1 class="title" style="font-size: clamp(28px, 3.5vw, 40px)">Analisis Tren & Kontribusi</h1>
+            </div>
+            <div class="flex-grow-1 px-5 pb-4 overflow-auto">
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h5 class="card-title mb-3" style="font-size: clamp(16px, 1.8vw, 22px)">
+                        <i class="fas fa-chart-bar me-2" style="color: var(--gold-color)"></i>
+                        Nominal Transaksi vs Total Penjualan
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="transactionChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h5 class="card-title mb-3" style="font-size: clamp(16px, 1.8vw, 22px)">
+                        <i class="fas fa-percentage me-2" style="color: var(--gold-color)"></i>
+                        Persentase Kontribusi per Bulan
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="contributionChart"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-12">
+                  <div
+                    class="card border-0 shadow-sm"
+                    style="background: linear-gradient(135deg, var(--gold-light) 0%, rgba(255, 255, 255, 0.95) 100%)"
+                  >
+                    <div class="card-body p-4">
+                      <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                          <i
+                            class="fas fa-lightbulb"
+                            style="font-size: clamp(40px, 5vw, 60px); color: var(--gold-color)"
+                          ></i>
+                        </div>
+                        <div class="col-md-10">
+                          <h4 class="fw-bold mb-3" style="font-size: clamp(18px, 2vw, 24px); color: var(--gold-color)">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Kesimpulan Strategis
+                          </h4>
+                          <p
+                            style="font-size: clamp(13px, 1.4vw, 18px); line-height: 1.6; margin-bottom: 0; color: #333"
+                          >
+                            Admin Melati Young menunjukkan
+                            <span class="highlight">peran strategis</span>
+                            dalam menjaga nilai penjualan toko melalui
+                            <span class="highlight">transaksi bernilai tinggi</span>
+                            . Kinerja
+                            <span class="highlight">September menjadi momentum terbaik</span>
+                            , mencerminkan efektivitas strategi penjualan meski total omzet toko menurun. Dengan
+                            rata-rata kontribusi
+                            <span class="highlight">7.2%</span>
+                            dan nominal
+                            <span class="highlight">753 juta/bulan</span>
+                            , menunjukkan
+                            <span class="highlight">kemampuan adaptif</span>
+                            dalam mempertahankan performa di kondisi pasar yang fluktuatif.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 4: Overview Admin Bawah -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="gold-accent"></div>
+          <div class="container-fluid h-100 position-relative" style="z-index: 2">
+            <div class="row h-100 align-items-center">
+              <div class="col-lg-6 px-5">
+                <div class="mb-4">
+                  <img
+                    src="https://z-cdn-media.chatglm.cn/files/027b7cbe-3a4a-42c8-ac0d-5656a362f92e_logo.png?auth_key=1792894321-e99502d1c22545c7950ef189b3e021f7-0-6f33a2c11e37d03d01f122069059317d"
+                    alt="Melati Gold Shop Logo"
+                    style="max-width: clamp(120px, 15vw, 200px)"
+                  />
+                </div>
+                <h1 class="title" style="font-size: clamp(32px, 4.5vw, 60px)">Kinerja Admin Bawah</h1>
+                <h2 class="subtitle mt-3" style="font-size: clamp(14px, 1.5vw, 20px)">Juli – September 2025</h2>
+                <p class="mt-4" style="font-size: clamp(13px, 1.3vw, 18px); color: #666; line-height: 1.6">
+                  Analisis volume transaksi operasional dan peran vital dalam menjaga stabilitas arus kas toko
+                </p>
+              </div>
+              <div class="col-lg-6 px-5">
+                <div class="row g-4">
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">
+                        Rata-rata Transaksi
+                      </div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">3.36 Miliar</div>
+                      <div class="text-muted mt-2" style="font-size: clamp(10px, 1vw, 12px)">Per Bulan</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">
+                        Rata-rata Kontribusi
+                      </div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">5.6%</div>
+                      <div class="text-muted mt-2" style="font-size: clamp(10px, 1vw, 12px)">Terhadap Total</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">Total Nominal</div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">10.07 Miliar</div>
+                      <div class="text-muted mt-2" style="font-size: clamp(10px, 1vw, 12px)">Jul-Sep 2025</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="bento-item p-4 text-center">
+                      <div class="bento-item-title mb-3" style="font-size: clamp(12px, 1.2vw, 16px)">Bulan Terbaik</div>
+                      <div class="bento-item-value" style="font-size: clamp(18px, 2.2vw, 28px)">Agustus</div>
+                      <div class="trend-up mt-2" style="font-size: clamp(10px, 1vw, 12px)">
+                        <i class="fas fa-arrow-up me-1"></i>
+                        6.2% Kontribusi
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 5: Data Table & Insights Admin Bawah -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="d-flex flex-column h-100 position-relative" style="z-index: 2">
+            <div class="px-5 py-4">
+              <h1 class="title" style="font-size: clamp(28px, 3.5vw, 40px)">
+                Ringkasan Data Admin Bawah (Juli–September 2025)
+              </h1>
+            </div>
+            <div class="flex-grow-1 px-5 pb-4 overflow-auto">
+              <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">NOMINAL TERTINGGI</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">3.85 Miliar</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Agustus 2025</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">KONTRIBUSI TERTINGGI</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">6.2%</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">Agustus 2025</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-card p-3 text-center">
+                    <div class="metric-title" style="font-size: clamp(11px, 1.2vw, 14px)">VOLUME TRANSAKSI</div>
+                    <div class="metric-value mt-2" style="font-size: clamp(18px, 2vw, 24px)">Tinggi</div>
+                    <div class="text-muted mt-1" style="font-size: clamp(10px, 1vw, 12px)">
+                      <i class="fas fa-chart-bar me-1"></i>
+                      Transaksi Ritel
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                      <thead>
+                        <tr>
+                          <th>Bulan</th>
+                          <th>
+                            Nominal
+                            <br />
+                            Transaksi
+                          </th>
+                          <th>
+                            Total Penjualan
+                            <br />
+                            Keseluruhan
+                          </th>
+                          <th>
+                            Persentase
+                            <br />
+                            Kontribusi
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>Juli 2025</td>
+                          <td>Rp 2,981,602,000</td>
+                          <td>Rp 52,152,586,000</td>
+                          <td>5.7%</td>
+                        </tr>
+                        <tr style="background-color: rgba(76, 175, 80, 0.1)">
+                          <td style="font-weight: 600; color: #4caf50">Agustus 2025</td>
+                          <td style="font-weight: 600; color: #4caf50">Rp 3,850,524,000</td>
+                          <td style="font-weight: 600; color: #4caf50">Rp 62,503,461,000</td>
+                          <td style="font-weight: 700; color: #4caf50">6.2%</td>
+                        </tr>
+                        <tr class="month-row">
+                          <td>September 2025</td>
+                          <td>Rp 3,239,641,000</td>
+                          <td>Rp 66,444,099,000</td>
+                          <td>4.9%</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="insight-card p-3" style="min-height: 180px; display: flex; flex-direction: column">
+                    <div class="fw-bold mb-2" style="font-size: clamp(13px, 1.4vw, 16px)">
+                      <i class="fas fa-shopping-cart me-2"></i>
+                      VOLUME TINGGI
+                    </div>
+                    <div style="font-size: clamp(11px, 1.2vw, 14px); line-height: 1.4; flex-grow: 1">
+                      <span class="data-badge">
+                        <i class="fas fa-store"></i>
+                        Ritel
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-users"></i>
+                        Langsung
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Total nominal besar menunjukkan
+                        <span class="highlight">intensitas transaksi tinggi</span>
+                        dengan nilai per transaksi lebih kecil
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="insight-card p-3" style="min-height: 180px; display: flex; flex-direction: column">
+                    <div class="fw-bold mb-2" style="font-size: clamp(13px, 1.4vw, 16px)">
+                      <i class="fas fa-rocket me-2"></i>
+                      PUNCAK AGUSTUS
+                    </div>
+                    <div style="font-size: clamp(11px, 1.2vw, 14px); line-height: 1.4; flex-grow: 1">
+                      <span class="data-badge">
+                        <i class="fas fa-arrow-up"></i>
+                        +29%
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-chart-line"></i>
+                        Responsif
+                      </span>
+                      <p class="mb-0 mt-2">Sejalan dengan peningkatan total penjualan.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="insight-card p-3" style="min-height: 180px; display: flex; flex-direction: column">
+                    <div class="fw-bold mb-2" style="font-size: clamp(13px, 1.4vw, 16px)">
+                      <i class="fas fa-cogs me-2"></i>
+                      PERAN OPERASIONAL
+                    </div>
+                    <div style="font-size: clamp(11px, 1.2vw, 14px); line-height: 1.4; flex-grow: 1">
+                      <span class="data-badge">
+                        <i class="fas fa-cash-register"></i>
+                        Ujung Tombak
+                      </span>
+                      <span class="data-badge">
+                        <i class="fas fa-sync-alt"></i>
+                        Stabilitas
+                      </span>
+                      <p class="mb-0 mt-2">
+                        Menjaga
+                        <span class="highlight">arus kas</span>
+                        dan ritme penjualan toko sehari-hari
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 6: Chart Analysis Admin Bawah -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="d-flex flex-column h-100 position-relative" style="z-index: 2">
+            <div class="px-5 py-4">
+              <h1 class="title" style="font-size: clamp(28px, 3.5vw, 40px)">Analisis Tren Admin Bawah</h1>
+            </div>
+            <div class="flex-grow-1 px-5 pb-4 overflow-auto">
+              <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h5 class="card-title mb-3" style="font-size: clamp(16px, 1.8vw, 22px)">
+                        <i class="fas fa-chart-bar me-2" style="color: var(--gold-color)"></i>
+                        Nominal Transaksi vs Total Penjualan
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="transactionChartBawah"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h5 class="card-title mb-3" style="font-size: clamp(16px, 1.8vw, 22px)">
+                        <i class="fas fa-percentage me-2" style="color: var(--gold-color)"></i>
+                        Persentase Kontribusi per Bulan
+                      </h5>
+                      <div class="chart-wrapper">
+                        <canvas id="contributionChartBawah"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-12">
+                  <div
+                    class="card border-0 shadow-sm"
+                    style="background: linear-gradient(135deg, var(--gold-light) 0%, rgba(255, 255, 255, 0.95) 100%)"
+                  >
+                    <div class="card-body p-4">
+                      <div class="row align-items-center">
+                        <div class="col-md-2 text-center">
+                          <i
+                            class="fas fa-lightbulb"
+                            style="font-size: clamp(40px, 5vw, 60px); color: var(--gold-color)"
+                          ></i>
+                        </div>
+                        <div class="col-md-10">
+                          <h4 class="fw-bold mb-3" style="font-size: clamp(18px, 2vw, 24px); color: var(--gold-color)">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Kesimpulan Strategis
+                          </h4>
+                          <p
+                            style="font-size: clamp(13px, 1.4vw, 18px); line-height: 1.6; margin-bottom: 0; color: #333"
+                          >
+                            Admin Bawah berperan
+                            <span class="highlight">penting</span>
+                            dalam menjaga
+                            <span class="highlight">volume transaksi toko</span>
+                            . Kinerja
+                            <span class="highlight">Agustus merupakan puncak capaian</span>
+                            dengan nominal 3.85 miliar dan kontribusi 6.2% dengan rata-rata
+                            <span class="highlight">3.36 miliar/bulan.</span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 7: Discussion Questions -->
+        <div class="slide">
+          <div class="background-pattern"></div>
+          <div class="gold-accent"></div>
+          <div class="d-flex flex-column h-100 position-relative" style="z-index: 2">
+            <div class="px-5 py-4">
+              <h1 class="title" style="font-size: clamp(28px, 3.5vw, 40px)">
+                <i class="fas fa-comments me-3" style="color: var(--gold-color)"></i>
+                Bahan Diskusi
+              </h1>
+              <p class="subtitle mt-2" style="font-size: clamp(13px, 1.4vw, 18px)">
+                Mari kita diskusikan bersama untuk meningkatkan efisiensi operasional dan kualitas layanan
+              </p>
+            </div>
+            <div class="flex-grow-1 px-5 pb-4 overflow-auto">
+              <div class="row g-3">
+                <div class="col-12">
+                  <div class="discussion-question d-flex align-items-start">
+                    <div class="discussion-question-number">1</div>
+                    <div class="discussion-question-text">
+                      Apakah alur kerja antar admin dan koordinasi dengan divisi lain sudah berjalan efisien, atau masih
+                      ada tahapan yang bisa dioptimalkan?
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="discussion-question d-flex align-items-start">
+                    <div class="discussion-question-number">2</div>
+                    <div class="discussion-question-text">
+                      Kendala apa yang paling sering dihadapi dalam melayani pelanggan, dan bagaimana dampaknya terhadap
+                      kepuasan layanan?
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="discussion-question d-flex align-items-start">
+                    <div class="discussion-question-number">3</div>
+                    <div class="discussion-question-text">
+                      Apa yang bisa dilakukan dalam waktu dekat untuk meningkatkan efisiensi kerja dan engagement
+                      customer?
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="discussion-question d-flex align-items-start">
+                    <div class="discussion-question-number">4</div>
+                    <div class="discussion-question-text">
+                      Adakah yang perlu dioptimalkan dalam proses posting barang di internal toko agar lebih efisien dan
+                      bisa meningkatkan engagement?
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      let currentSlideIndex = 0;
+      const totalSlides = 7;
+      const slidesWrapper = document.getElementById("slidesWrapper");
+      let chartsInitialized = false;
+      let chartsBawahInitialized = false;
+
+      function initCharts() {
+        if (chartsInitialized) return;
+
+        const months = ["Juli", "Agustus", "September"];
+        const nominalData = [793.404, 609.67, 856.218]; // dalam juta
+        const totalSalesData = [10454.02, 11100.243, 10197.858]; // dalam juta
+        const contributionData = [7.6, 5.5, 8.4];
+
+        // Chart 1: Nominal vs Total
+        new Chart(document.getElementById("transactionChart").getContext("2d"), {
+          type: "bar",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: "Nominal Transaksi Admin (Juta Rp)",
+                data: nominalData,
+                backgroundColor: "rgba(212, 175, 55, 0.7)",
+                borderColor: "rgba(212, 175, 55, 1)",
+                borderWidth: 2,
+                yAxisID: "y",
+              },
+              {
+                label: "Total Penjualan Keseluruhan (Juta Rp)",
+                data: totalSalesData,
+                type: "line",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 3,
+                pointBackgroundColor: "rgba(75, 192, 192, 1)",
+                pointRadius: 6,
+                fill: false,
+                yAxisID: "y1",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                position: "left",
+                title: { display: true, text: "Nominal Admin (Juta Rp)" },
+              },
+              y1: {
+                beginAtZero: true,
+                position: "right",
+                title: { display: true, text: "Total Penjualan (Juta Rp)" },
+                grid: { drawOnChartArea: false },
+              },
+            },
+            plugins: {
+              legend: { position: "top" },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    let label = context.dataset.label || "";
+                    if (label) {
+                      label += ": ";
+                    }
+                    label += "Rp " + context.parsed.y.toFixed(2) + " Juta";
+                    return label;
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        // Chart 2: Contribution Percentage
+        new Chart(document.getElementById("contributionChart").getContext("2d"), {
+          type: "line",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: "Persentase Kontribusi (%)",
+                data: contributionData,
+                backgroundColor: "rgba(212, 175, 55, 0.2)",
+                borderColor: "rgba(212, 175, 55, 1)",
+                borderWidth: 3,
+                pointBackgroundColor: "rgba(212, 175, 55, 1)",
+                pointRadius: 8,
+                pointHoverRadius: 10,
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 10,
+                title: { display: true, text: "Kontribusi (%)" },
+                ticks: {
+                  callback: function (value) {
+                    return value + "%";
+                  },
+                },
+              },
+            },
+            plugins: {
+              legend: { position: "top" },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return "Kontribusi: " + context.parsed.y + "%";
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        chartsInitialized = true;
+      }
+
+      function initChartsBawah() {
+        if (chartsBawahInitialized) return;
+
+        const months = ["Juli", "Agustus", "September"];
+        const nominalDataBawah = [2981.602, 3850.524, 3239.641]; // dalam juta
+        const totalSalesData = [52152.586, 62503.461, 66444.099]; // dalam juta
+        const contributionDataBawah = [5.7, 6.2, 4.9];
+
+        // Chart 1: Nominal vs Total
+        new Chart(document.getElementById("transactionChartBawah").getContext("2d"), {
+          type: "bar",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: "Nominal Transaksi Admin Bawah (Juta Rp)",
+                data: nominalDataBawah,
+                backgroundColor: "rgba(212, 175, 55, 0.7)",
+                borderColor: "rgba(212, 175, 55, 1)",
+                borderWidth: 2,
+                yAxisID: "y",
+              },
+              {
+                label: "Total Penjualan Keseluruhan (Juta Rp)",
+                data: totalSalesData,
+                type: "line",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 3,
+                pointBackgroundColor: "rgba(75, 192, 192, 1)",
+                pointRadius: 6,
+                fill: false,
+                yAxisID: "y1",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                position: "left",
+                title: { display: true, text: "Nominal Admin Bawah (Juta Rp)" },
+              },
+              y1: {
+                beginAtZero: true,
+                position: "right",
+                title: { display: true, text: "Total Penjualan (Juta Rp)" },
+                grid: { drawOnChartArea: false },
+              },
+            },
+            plugins: {
+              legend: { position: "top" },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    let label = context.dataset.label || "";
+                    if (label) {
+                      label += ": ";
+                    }
+                    label += "Rp " + context.parsed.y.toFixed(2) + " Juta";
+                    return label;
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        // Chart 2: Contribution Percentage
+        new Chart(document.getElementById("contributionChartBawah").getContext("2d"), {
+          type: "line",
+          data: {
+            labels: months,
+            datasets: [
+              {
+                label: "Persentase Kontribusi (%)",
+                data: contributionDataBawah,
+                backgroundColor: "rgba(212, 175, 55, 0.2)",
+                borderColor: "rgba(212, 175, 55, 1)",
+                borderWidth: 3,
+                pointBackgroundColor: "rgba(212, 175, 55, 1)",
+                pointRadius: 8,
+                pointHoverRadius: 10,
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 10,
+                title: { display: true, text: "Kontribusi (%)" },
+                ticks: {
+                  callback: function (value) {
+                    return value + "%";
+                  },
+                },
+              },
+            },
+            plugins: {
+              legend: { position: "top" },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return "Kontribusi: " + context.parsed.y + "%";
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        chartsBawahInitialized = true;
+      }
+
+      function changeSlide(direction) {
+        const newIndex = currentSlideIndex + direction;
+        if (newIndex >= 0 && newIndex < totalSlides) {
+          currentSlideIndex = newIndex;
+          updateSlide();
+        }
+      }
+
+      function goToSlide(index) {
+        if (index >= 0 && index < totalSlides) {
+          currentSlideIndex = index;
+          updateSlide();
+        }
+      }
+
+      function updateSlide() {
+        slidesWrapper.style.transform = `translateX(-${currentSlideIndex * 100}vw)`;
+
+        // Remove active class from all slides
+        document.querySelectorAll(".slide").forEach((slide) => slide.classList.remove("active"));
+
+        // Add active class to current slide
+        const currentSlide = document.querySelectorAll(".slide")[currentSlideIndex];
+        setTimeout(() => currentSlide.classList.add("active"), 50);
+
+        // Initialize charts when reaching slide 3
+        if (currentSlideIndex === 2 && !chartsInitialized) {
+          setTimeout(initCharts, 100);
+        }
+
+        // Initialize charts when reaching slide 6
+        if (currentSlideIndex === 5 && !chartsBawahInitialized) {
+          setTimeout(initChartsBawah, 100);
+        }
+      }
+
+      document.addEventListener("keydown", (e) => {
+        switch (e.key) {
+          case "ArrowLeft":
+          case "PageUp":
+            changeSlide(-1);
+            break;
+          case "ArrowRight":
+          case "PageDown":
+          case " ":
+          case "Enter":
+            changeSlide(1);
+            break;
+          case "Home":
+            goToSlide(0);
+            break;
+          case "End":
+            goToSlide(totalSlides - 1);
+            break;
+          case "1":
+          case "2":
+          case "3":
+          case "4":
+          case "5":
+          case "6":
+          case "7":
+            goToSlide(parseInt(e.key) - 1);
+            break;
+        }
+      });
+
+      let touchStartX = 0;
+      document.addEventListener("touchstart", (e) => (touchStartX = e.changedTouches[0].screenX));
+      document.addEventListener("touchend", (e) => {
+        const diff = touchStartX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1);
+      });
+
+      updateSlide();
+
+      // Set first slide as active on load
+      setTimeout(() => {
+        document.querySelectorAll(".slide")[0].classList.add("active");
+      }, 100);
+    </script>
+  </body>
+</html>
