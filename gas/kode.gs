@@ -21,22 +21,15 @@ function doGet(e) {
   const page = params.page || "dashboard";
 
   try {
-    switch (page) {
-      case "dashboard":
-        return HtmlService.createTemplateFromFile("Dashboard")
-          .evaluate()
-          .setTitle("Sistem Pencatatan Barang")
-          .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-
-      case "form":
-        return HtmlService.createTemplateFromFile("FormTambah")
-          .evaluate()
-          .setTitle("Tambah Data Baru")
-          .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-
-      default:
-        return HtmlService.createHtmlOutput("<h1>Page not found</h1>");
+    // Only serve Dashboard page (form & edit are now modals)
+    if (page === "dashboard") {
+      return HtmlService.createTemplateFromFile("Dashboard")
+        .evaluate()
+        .setTitle("Sistem Pencatatan Barang")
+        .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
     }
+
+    return HtmlService.createHtmlOutput("<h1>Page not found</h1>");
   } catch (error) {
     Logger.log("doGet Error: " + error);
     return HtmlService.createHtmlOutput("<h1>Error:  " + error + "</h1>");
@@ -59,41 +52,20 @@ function include(filename) {
  * Get all data from sheet with pagination and filters
  */
 function getSheetData(page, filters) {
-  Logger.log("=== getSheetData START ===");
+  page = page || 1;
+  filters = filters || {};
+
   try {
-    // Set defaults
-    page = page || 1;
-    filters = filters || {};
-
-    Logger.log("getSheetData called - Page: " + page);
-    Logger.log("Filters: " + JSON.stringify(filters));
-    Logger.log("SPREADSHEET_ID: " + CONFIG.SPREADSHEET_ID);
-    Logger.log("SHEET_NAME: " + CONFIG.SHEET_NAME);
-
     const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
-    Logger.log("Spreadsheet opened successfully: " + ss.getName());
-
     const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
 
     if (!sheet) {
-      Logger.log("Sheet not found: " + CONFIG.SHEET_NAME);
-      Logger.log(
-        "Available sheets: " +
-          ss
-            .getSheets()
-            .map((s) => s.getName())
-            .join(", ")
-      );
       throw new Error('Sheet "' + CONFIG.SHEET_NAME + '" tidak ditemukan!');
     }
 
-    Logger.log("Sheet found: " + sheet.getName());
-
     const lastRow = sheet.getLastRow();
-    Logger.log("Last row: " + lastRow);
 
     if (lastRow <= 1) {
-      Logger.log("No data - returning empty result");
       return {
         data: [],
         total: 0,
@@ -103,30 +75,47 @@ function getSheetData(page, filters) {
       };
     }
 
-    // Get all data (skip header) - Updated to 10 columns
-    const range = sheet.getRange(2, 1, lastRow - 1, 10);
+    // Get all data (skip header) - Updated to 12 columns
+    const range = sheet.getRange(2, 1, lastRow - 1, 12);
     const values = range.getValues();
-    Logger.log("Got " + values.length + " rows of data");
 
     // Convert to objects with new structure
     let data = values
-      .map((row, index) => ({
-        rowIndex: index + 2, // Actual row in sheet
-        no: row[0],
-        tanggal: row[1] ? Utilities.formatDate(new Date(row[1]), Session.getScriptTimeZone(), "dd/MM/yyyy") : "",
-        jam: row[2]
-          ? row[2] instanceof Date
-            ? Utilities.formatDate(new Date(row[2]), Session.getScriptTimeZone(), "HH:mm")
-            : row[2]
-          : "",
-        sales: row[3],
-        namaBarang: row[4],
-        berat: row[5],
-        kadar: row[6],
-        harga: row[7],
-        fotoId: row[8],
-        lihatFoto: row[9],
-      }))
+      .map((row, index) => {
+        try {
+          // Parse tanggal - ensure only date part, not time
+          let tanggalFormatted = "";
+          if (row[1]) {
+            const dateObj = new Date(row[1]);
+            // Remove time component by creating new date with only date parts
+            const dateOnly = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+            tanggalFormatted = Utilities.formatDate(dateOnly, Session.getScriptTimeZone(), "dd/MM/yyyy");
+          }
+
+          return {
+            rowIndex: index + 2, // Actual row in sheet
+            no: row[0] || "",
+            tanggal: tanggalFormatted,
+            jam: row[2]
+              ? row[2] instanceof Date
+                ? Utilities.formatDate(new Date(row[2]), Session.getScriptTimeZone(), "HH:mm")
+                : String(row[2])
+              : "",
+            sales: row[3] || "",
+            namaCustomer: row[4] || "",
+            infoKontak: row[5] || "",
+            namaBarang: row[6] || "",
+            berat: row[7] || "",
+            kadar: row[8] || "",
+            harga: row[9] || "",
+            fotoId: row[10] || "",
+            lihatFoto: row[11] || "",
+          };
+        } catch (e) {
+          return null;
+        }
+      })
+      .filter((item) => item !== null) // Remove any null entries
       .reverse(); // Newest first
 
     // Apply filters
@@ -140,6 +129,7 @@ function getSheetData(page, filters) {
         (item) =>
           (item.sales && item.sales.toLowerCase().includes(searchLower)) ||
           (item.namaBarang && item.namaBarang.toLowerCase().includes(searchLower)) ||
+          (item.namaCustomer && item.namaCustomer.toLowerCase().includes(searchLower)) ||
           (item.no && item.no.toString().includes(searchLower))
       );
     }
@@ -152,7 +142,7 @@ function getSheetData(page, filters) {
     }
 
     // Calculate stats (from original data before pagination)
-    const allData = values.map((row) => ({ lihatFoto: row[9] }));
+    const allData = values.map((row) => ({ lihatFoto: row[11] })); // Column L = index 11
     const stats = {
       total: allData.length,
       uploaded: allData.filter((item) => item.lihatFoto && item.lihatFoto.trim() !== "").length,
@@ -172,31 +162,19 @@ function getSheetData(page, filters) {
       stats: stats,
     };
 
-    Logger.log("Returning result with " + paginatedData.length + " items");
-    Logger.log("Result object: " + JSON.stringify(result));
-    Logger.log("=== getSheetData END SUCCESS ===");
     return result;
   } catch (error) {
-    Logger.log("=== getSheetData ERROR ===");
-    Logger.log("getSheetData Error: " + error);
-    Logger.log("Error stack: " + error.stack);
-    Logger.log("Error name: " + error.name);
-    Logger.log("Error message: " + error.message);
+    Logger.log("Error in getSheetData: " + error.toString());
 
-    // Return consistent format instead of throwing
-    const errorResult = {
+    return {
       data: [],
       total: 0,
-      page: 1,
+      page: page || 1,
       totalPages: 0,
       stats: { total: 0, uploaded: 0, notUploaded: 0 },
       error: true,
-      errorMessage: error.toString(),
+      errorMessage: error.message || error.toString(),
     };
-
-    Logger.log("Returning error result: " + JSON.stringify(errorResult));
-    Logger.log("=== getSheetData END ERROR ===");
-    return errorResult;
   }
 }
 
@@ -204,21 +182,31 @@ function getSheetData(page, filters) {
  * Get unique sales names for filter dropdown
  */
 function getUniqueSales() {
+  Logger.log("=== getUniqueSales START ===");
   try {
     const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
     const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
     const lastRow = sheet.getLastRow();
 
-    if (lastRow <= 1) return [];
+    Logger.log("Last row in sheet: " + lastRow);
+
+    if (lastRow <= 1) {
+      Logger.log("No data, returning empty array");
+      return [];
+    }
 
     // Column D = Sales (index 4)
     const salesColumn = sheet.getRange(2, 4, lastRow - 1, 1).getValues();
     const uniqueSales = [...new Set(salesColumn.map((row) => row[0]).filter((val) => val))];
 
+    Logger.log("Found " + uniqueSales.length + " unique sales");
+    Logger.log("=== getUniqueSales END SUCCESS ===");
     return uniqueSales.sort();
   } catch (error) {
+    Logger.log("=== getUniqueSales ERROR ===");
     Logger.log("getUniqueSales Error: " + error);
-    return [];
+    Logger.log("Error message: " + (error.message || error.toString()));
+    return []; // Always return array, never null
   }
 }
 
@@ -227,6 +215,28 @@ function getUniqueSales() {
  */
 function addNewRecord(formData) {
   try {
+    // Validate input
+    if (!formData) {
+      return {
+        success: false,
+        message: "Error: formData is required. Use testAddRecord() for testing.",
+      };
+    }
+
+    if (
+      !formData.tanggal ||
+      !formData.sales ||
+      !formData.namaBarang ||
+      !formData.berat ||
+      !formData.kadar ||
+      !formData.harga
+    ) {
+      return {
+        success: false,
+        message: "Error: Missing required fields (tanggal, sales, namaBarang, berat, kadar, harga)",
+      };
+    }
+
     const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
     const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
 
@@ -234,22 +244,25 @@ function addNewRecord(formData) {
     const lastRow = sheet.getLastRow();
     const newNo = lastRow <= 1 ? 1 : sheet.getRange(lastRow, 1).getValue() + 1;
 
-    // Parse date and time
-    const tanggal = new Date(formData.tanggal);
+    // Parse date - ensure only date part without time
+    const tanggalObj = new Date(formData.tanggal);
+    const tanggalOnly = new Date(tanggalObj.getFullYear(), tanggalObj.getMonth(), tanggalObj.getDate());
     const jam = formData.jam || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "HH:mm");
 
-    // Prepare row data (10 columns)
+    // Prepare row data (12 columns)
     const rowData = [
       newNo, // A:  No
-      tanggal, // B:  Tanggal
+      tanggalOnly, // B:  Tanggal (date only, no time)
       jam, // C: Jam
       formData.sales, // D: Sales
-      formData.namaBarang, // E: Nama Barang
-      formData.berat, // F: Berat
-      formData.kadar, // G: Kadar
-      formData.harga, // H: Harga
-      "", // I: Foto ID (empty)
-      "", // J: Lihat Foto (empty)
+      formData.namaCustomer || "", // E: Nama Customer
+      formData.infoKontak || "", // F: Info Kontak
+      formData.namaBarang, // G: Nama Barang
+      formData.berat, // H: Berat
+      formData.kadar, // I: Kadar
+      formData.harga, // J: Harga
+      "", // K: Foto ID (empty)
+      "", // L: Lihat Foto (empty)
     ];
 
     // Append to sheet
@@ -274,28 +287,62 @@ function addNewRecord(formData) {
  */
 function getRecordByRow(rowIndex) {
   try {
+    // Validate input
+    if (!rowIndex || typeof rowIndex !== "number") {
+      return {
+        success: false,
+        message: "Error: rowIndex is required and must be a number. Use testGetRecordByRow() for testing.",
+      };
+    }
+
+    if (rowIndex < 2) {
+      return {
+        success: false,
+        message: "Error: rowIndex must be >= 2 (row 1 is header)",
+      };
+    }
+
     const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
     const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
-    const row = sheet.getRange(rowIndex, 1, 1, 10).getValues()[0];
+    const lastRow = sheet.getLastRow();
+
+    if (rowIndex > lastRow) {
+      return {
+        success: false,
+        message: "Error: rowIndex " + rowIndex + " exceeds last row " + lastRow,
+      };
+    }
+
+    const row = sheet.getRange(rowIndex, 1, 1, 12).getValues()[0];
+
+    // Parse tanggal - ensure only date part
+    let tanggalFormatted = "";
+    if (row[1]) {
+      const dateObj = new Date(row[1]);
+      const dateOnly = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+      tanggalFormatted = Utilities.formatDate(dateOnly, Session.getScriptTimeZone(), "dd/MM/yyyy");
+    }
 
     return {
       success: true,
       data: {
         rowIndex: rowIndex,
         no: row[0],
-        tanggal: row[1] ? Utilities.formatDate(new Date(row[1]), Session.getScriptTimeZone(), "dd/MM/yyyy") : "",
+        tanggal: tanggalFormatted,
         jam: row[2]
           ? row[2] instanceof Date
             ? Utilities.formatDate(new Date(row[2]), Session.getScriptTimeZone(), "HH:mm")
             : row[2]
           : "",
         sales: row[3],
-        namaBarang: row[4],
-        berat: row[5],
-        kadar: row[6],
-        harga: row[7],
-        fotoId: row[8],
-        lihatFoto: row[9],
+        namaCustomer: row[4] || "",
+        infoKontak: row[5] || "",
+        namaBarang: row[6] || "",
+        berat: row[7] || "",
+        kadar: row[8] || "",
+        harga: row[9] || "",
+        fotoId: row[10] || "",
+        lihatFoto: row[11] || "",
       },
     };
   } catch (error) {
@@ -312,11 +359,19 @@ function getRecordByRow(rowIndex) {
  */
 function updateWithUpload(rowIndex, fileData, fileName, mimeType) {
   try {
+    // Validate input
+    if (!rowIndex || !fileData || !fileName || !mimeType) {
+      return {
+        success: false,
+        message: "Error: Missing required parameters (rowIndex, fileData, fileName, mimeType)",
+      };
+    }
+
     const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
     const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
 
     // Get current record
-    const record = sheet.getRange(rowIndex, 1, 1, 10).getValues()[0];
+    const record = sheet.getRange(rowIndex, 1, 1, 12).getValues()[0];
     const no = record[0];
     const sales = record[3];
 
@@ -328,8 +383,8 @@ function updateWithUpload(rowIndex, fileData, fileName, mimeType) {
     }
 
     // Update sheet
-    sheet.getRange(rowIndex, 9).setValue(uploadResult.fileId); // I: Foto ID
-    sheet.getRange(rowIndex, 10).setValue(uploadResult.url); // J: Lihat Foto
+    sheet.getRange(rowIndex, 11).setValue(uploadResult.fileId); // K: Foto ID
+    sheet.getRange(rowIndex, 12).setValue(uploadResult.url); // L: Lihat Foto
 
     return {
       success: true,
@@ -350,6 +405,14 @@ function updateWithUpload(rowIndex, fileData, fileName, mimeType) {
  */
 function uploadToGoogleDrive(base64Data, fileName, mimeType, no, salesName) {
   try {
+    // Validate input
+    if (!base64Data || !fileName || !mimeType) {
+      return {
+        success: false,
+        message: "Error: Missing required parameters (base64Data, fileName, mimeType)",
+      };
+    }
+
     // Get or create folder
     const folder = DriveApp.getFolderById(CONFIG.DRIVE_FOLDER_ID);
 
@@ -396,11 +459,19 @@ function uploadToGoogleDrive(base64Data, fileName, mimeType, no, salesName) {
  */
 function deletePhoto(rowIndex) {
   try {
+    // Validate input
+    if (!rowIndex) {
+      return {
+        success: false,
+        message: "Error: rowIndex is required",
+      };
+    }
+
     const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
     const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
 
     // Get foto ID
-    const fotoId = sheet.getRange(rowIndex, 9).getValue();
+    const fotoId = sheet.getRange(rowIndex, 11).getValue();
 
     if (fotoId) {
       try {
@@ -412,8 +483,8 @@ function deletePhoto(rowIndex) {
     }
 
     // Clear sheet columns
-    sheet.getRange(rowIndex, 9).setValue(""); // I: Foto ID
-    sheet.getRange(rowIndex, 10).setValue(""); // J: Lihat Foto
+    sheet.getRange(rowIndex, 11).setValue(""); // K: Foto ID
+    sheet.getRange(rowIndex, 12).setValue(""); // L: Lihat Foto
 
     return {
       success: true,
@@ -429,11 +500,122 @@ function deletePhoto(rowIndex) {
 }
 
 /**
- * Get form URL untuk popup
+ * Delete entire record from sheet
  */
-function getFormUrl() {
-  var url = ScriptApp.getService().getUrl();
-  return url + "?page=form";
+function deleteRecord(rowIndex) {
+  try {
+    // Validate input
+    if (!rowIndex) {
+      return {
+        success: false,
+        message: "Error: rowIndex is required",
+      };
+    }
+
+    const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+    const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+
+    // Get foto ID before deleting
+    const fotoId = sheet.getRange(rowIndex, 11).getValue();
+
+    // Delete foto from Drive if exists
+    if (fotoId) {
+      try {
+        const file = DriveApp.getFileById(fotoId);
+        file.setTrashed(true);
+      } catch (e) {
+        Logger.log("File not found or already deleted: " + e);
+      }
+    }
+
+    // Delete the row
+    sheet.deleteRow(rowIndex);
+
+    return {
+      success: true,
+      message: "Data berhasil dihapus!",
+    };
+  } catch (error) {
+    Logger.log("deleteRecord Error: " + error);
+    return {
+      success: false,
+      message: "Error: " + error.toString(),
+    };
+  }
+}
+
+/**
+ * Update existing record
+ */
+function updateRecord(rowIndex, formData) {
+  try {
+    // Validate input
+    if (!rowIndex || !formData) {
+      return {
+        success: false,
+        message: "Error: rowIndex and formData are required",
+      };
+    }
+
+    if (
+      !formData.tanggal ||
+      !formData.sales ||
+      !formData.namaBarang ||
+      !formData.berat ||
+      !formData.kadar ||
+      !formData.harga
+    ) {
+      return {
+        success: false,
+        message: "Error: Missing required fields",
+      };
+    }
+
+    const ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+    const sheet = ss.getSheetByName(CONFIG.SHEET_NAME);
+
+    // Get current row to preserve No, FotoID, and LihatFoto
+    const currentRow = sheet.getRange(rowIndex, 1, 1, 12).getValues()[0];
+    const no = currentRow[0];
+    const fotoId = currentRow[10];
+    const lihatFoto = currentRow[11];
+
+    // Parse date - ensure only date part without time
+    const tanggalObj = new Date(formData.tanggal);
+    const tanggalOnly = new Date(tanggalObj.getFullYear(), tanggalObj.getMonth(), tanggalObj.getDate());
+    const jam = formData.jam || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "HH:mm");
+
+    // Update row data (preserve No and Foto columns)
+    const rowData = [
+      no, // A: No (preserve)
+      tanggalOnly, // B: Tanggal (date only, no time)
+      jam, // C: Jam
+      formData.sales, // D: Sales
+      formData.namaCustomer || "", // E: Nama Customer
+      formData.infoKontak || "", // F: Info Kontak
+      formData.namaBarang, // G: Nama Barang
+      formData.berat, // H: Berat
+      formData.kadar, // I: Kadar
+      formData.harga, // J: Harga
+      fotoId, // K: Foto ID (preserve)
+      lihatFoto, // L: Lihat Foto (preserve)
+    ];
+
+    // Update the row
+    sheet.getRange(rowIndex, 1, 1, 12).setValues([rowData]);
+
+    return {
+      success: true,
+      message: "Data berhasil diupdate!",
+      no: no,
+    };
+  } catch (error) {
+    Logger.log("updateRecord Error: " + error);
+    return {
+      success: false,
+      message: "Error: " + error.toString(),
+    };
+  }
 }
 
 /**
@@ -463,49 +645,4 @@ function initializeAuthorization() {
       error: error.toString(),
     };
   }
-}
-
-/**
- * Test function - untuk test authorization
- */
-function testFunction() {
-  Logger.log("Test successful!");
-  return "OK";
-}
-
-function testAddRecord() {
-  var testData = {
-    tanggal: "2025-12-20",
-    jam: "14:30",
-    sales: "Test Sales",
-    namaBarang: "Test Barang",
-    berat: "10 gram",
-    kadar: "24K",
-    harga: 1000000,
-  };
-
-  var result = addNewRecord(testData);
-  Logger.log(result);
-  return result;
-}
-
-/**
- * Test getSheetData function directly
- */
-function testGetSheetData() {
-  Logger.log("Starting testGetSheetData...");
-
-  var result = getSheetData(1, {});
-
-  Logger.log("Test Result:");
-  Logger.log("- Error: " + (result.error || false));
-  Logger.log("- Data length: " + result.data.length);
-  Logger.log("- Total: " + result.total);
-  Logger.log("- Stats: " + JSON.stringify(result.stats));
-
-  if (result.error) {
-    Logger.log("ERROR MESSAGE: " + result.errorMessage);
-  }
-
-  return result;
 }

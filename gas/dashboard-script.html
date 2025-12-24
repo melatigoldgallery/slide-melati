@@ -1,0 +1,558 @@
+<script>
+  // ==========================================
+  // DASHBOARD JAVASCRIPT WITH BOOTSTRAP 5
+  // ==========================================
+
+  var currentPage = 1;
+  var currentFilters = { sales: "Semua", hasPhoto: "all", search: "" };
+  var currentRowIndex = null;
+  var searchTimeout = null;
+
+  window.onload = function () {
+    loadSalesFilter();
+    loadData();
+    initializeDefaultDateTime();
+  };
+
+  function initializeDefaultDateTime() {
+    var now = new Date();
+    document.getElementById("tanggal").value = now.toISOString().split("T")[0];
+    document.getElementById("jam").value = now.toTimeString().slice(0, 5);
+  }
+
+  function loadSalesFilter() {
+    google.script.run
+      .withSuccessHandler(function (sales) {
+        var select = document.getElementById("filterSales");
+        sales.forEach(function (s) {
+          var option = document.createElement("option");
+          option.value = s;
+          option.textContent = s;
+          select.appendChild(option);
+        });
+      })
+      .withFailureHandler(function (error) {
+        handleError(error);
+      })
+      .getUniqueSales();
+  }
+
+  function loadData(page) {
+    page = page || 1;
+    currentPage = page;
+    showLoading();
+    google.script.run
+      .withSuccessHandler(function (result) {
+        renderData(result);
+      })
+      .withFailureHandler(function (error) {
+        hideLoading();
+        showNotification("Error memuat data: " + error.message, "error");
+        document.getElementById("tableContainer").style.display = "none";
+        document.getElementById("emptyState").style.display = "block";
+      })
+      .getSheetData(page, currentFilters);
+  }
+
+  function renderData(result) {
+    hideLoading();
+
+    // Check if result is valid
+    if (!result || typeof result !== "object") {
+      showNotification("Error memuat data: Response tidak valid", "error");
+      document.getElementById("tableContainer").style.display = "none";
+      document.getElementById("emptyState").style.display = "block";
+      return;
+    }
+
+    // Check if error returned from server
+    if (result.error) {
+      showNotification("Error memuat data: " + (result.errorMessage || "Unknown error"), "error");
+      // Still show stats as empty
+      document.getElementById("statTotal").textContent = "0";
+      document.getElementById("statUploaded").textContent = "0";
+      document.getElementById("statNotUploaded").textContent = "0";
+      document.getElementById("tableContainer").style.display = "none";
+      document.getElementById("emptyState").style.display = "block";
+      return;
+    }
+
+    // Ensure stats object exists
+    if (!result.stats) {
+      result.stats = { total: 0, uploaded: 0, notUploaded: 0 };
+    }
+
+    // Ensure data array exists
+    if (!Array.isArray(result.data)) {
+      result.data = [];
+    }
+
+    document.getElementById("statTotal").textContent = result.stats.total;
+    document.getElementById("statUploaded").textContent = result.stats.uploaded;
+    document.getElementById("statNotUploaded").textContent = result.stats.notUploaded;
+
+    if (result.data.length === 0) {
+      document.getElementById("tableContainer").style.display = "none";
+      document.getElementById("emptyState").style.display = "block";
+      return;
+    }
+
+    document.getElementById("tableContainer").style.display = "block";
+    document.getElementById("emptyState").style.display = "none";
+
+    var tbody = document.getElementById("tableBody");
+    tbody.innerHTML = "";
+
+    result.data.forEach(function (row) {
+      var tr = document.createElement("tr");
+      var hasPhoto = row.lihatFoto && row.lihatFoto.trim() !== "";
+
+      // Kolom Bukti (Upload/Lihat/Hapus Foto)
+      var buktiButtons = "";
+      if (hasPhoto) {
+        buktiButtons =
+          '<button class="btn-action btn-action-success" onclick="window.open(\'' +
+          row.lihatFoto +
+          "', '_blank')\">👁️</button>" +
+          '<button class="btn-action btn-action-danger" onclick="confirmDeletePhoto(' +
+          row.rowIndex +
+          ')" style="margin-left: 5px;">🗑️</button>';
+      } else {
+        buktiButtons =
+          '<button class="btn-action btn-action-primary" onclick="openUploadModal(' +
+          row.rowIndex +
+          ')">📤</button>';
+      }
+
+      // Kolom Aksi (Edit/Hapus Data)
+      var aksiButtons =
+        '<button class="btn-action btn-action-warning" onclick="openFormEdit(' +
+        row.rowIndex +
+        ')">✏️</button>' +
+        '<button class="btn-action btn-action-danger" onclick="confirmDeleteRecord(' +
+        row.rowIndex +
+        ')" style="margin-left: 5px;">🗑️</button>';
+
+      var hargaFormatted = row.harga ? "Rp " + row.harga.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "-";
+
+      tr.innerHTML =
+        "<td>" +
+        row.no +
+        "</td><td>" +
+        row.tanggal +
+        "</td><td>" +
+        row.jam +
+        "</td><td>" +
+        (row.sales || "-") +
+        "</td><td>" +
+        (row.namaCustomer || "-") +
+        "</td><td>" +
+        (row.infoKontak || "-") +
+        "</td><td>" +
+        (row.namaBarang || "-") +
+        "</td><td>" +
+        (row.berat || "-") +
+        "</td><td>" +
+        (row.kadar || "-") +
+        "</td><td>" +
+        hargaFormatted +
+        "</td><td>" +
+        buktiButtons +
+        "</td><td>" +
+        aksiButtons +
+        "</td>";
+      tbody.appendChild(tr);
+    });
+
+    renderPagination(result);
+  }
+
+  function renderPagination(result) {
+    var container = document.getElementById("paginationContainer");
+    container.innerHTML = "";
+    if (result.totalPages <= 1) return;
+
+    var prevBtn = document.createElement("button");
+    prevBtn.className = "pagination-btn";
+    prevBtn.textContent = "◀️ Prev";
+    prevBtn.disabled = result.page === 1;
+    prevBtn.onclick = function () {
+      loadData(result.page - 1);
+    };
+    container.appendChild(prevBtn);
+
+    for (var i = 1; i <= result.totalPages; i++) {
+      if (i === 1 || i === result.totalPages || (i >= result.page - 2 && i <= result.page + 2)) {
+        var pageBtn = document.createElement("button");
+        pageBtn.className = "pagination-btn" + (i === result.page ? " active" : "");
+        pageBtn.textContent = i;
+        pageBtn.onclick = (function (page) {
+          return function () {
+            loadData(page);
+          };
+        })(i);
+        container.appendChild(pageBtn);
+      } else if (i === result.page - 3 || i === result.page + 3) {
+        var dots = document.createElement("span");
+        dots.textContent = "...";
+        dots.style.padding = "0 10px";
+        container.appendChild(dots);
+      }
+    }
+
+    var nextBtn = document.createElement("button");
+    nextBtn.className = "pagination-btn";
+    nextBtn.textContent = "Next ▶️";
+    nextBtn.disabled = result.page === result.totalPages;
+    nextBtn.onclick = function () {
+      loadData(result.page + 1);
+    };
+    container.appendChild(nextBtn);
+  }
+
+  function applyFilters() {
+    currentFilters.sales = document.getElementById("filterSales").value;
+    currentFilters.hasPhoto = document.getElementById("filterPhoto").value;
+    currentFilters.search = document.getElementById("searchInput").value;
+    loadData(1);
+  }
+
+  function handleSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(function () {
+      applyFilters();
+    }, 500);
+  }
+
+  function resetFilters() {
+    document.getElementById("filterSales").value = "Semua";
+    document.getElementById("filterPhoto").value = "all";
+    document.getElementById("searchInput").value = "";
+    currentFilters = { sales: "Semua", hasPhoto: "all", search: "" };
+    loadData(1);
+  }
+
+  function openFormTambah() {
+    // Reset form
+    document.getElementById("formTambah").reset();
+    var now = new Date();
+    document.getElementById("tanggal").value = now.toISOString().split("T")[0];
+    document.getElementById("jam").value = now.toTimeString().slice(0, 5);
+
+    // Show modal
+    var modal = new bootstrap.Modal(document.getElementById("modalTambah"));
+    modal.show();
+  }
+
+  function handleTambah() {
+    var formData = {
+      tanggal: document.getElementById("tanggal").value,
+      jam: document.getElementById("jam").value,
+      sales: document.getElementById("sales").value.trim(),
+      namaCustomer: document.getElementById("namaCustomer").value.trim(),
+      infoKontak: document.getElementById("infoKontak").value.trim(),
+      namaBarang: document.getElementById("namaBarang").value.trim(),
+      berat: document.getElementById("berat").value.trim(),
+      kadar: document.getElementById("kadar").value.trim(),
+      harga: document.getElementById("harga").value,
+    };
+
+    if (
+      !formData.tanggal ||
+      !formData.jam ||
+      !formData.sales ||
+      !formData.namaBarang ||
+      !formData.berat ||
+      !formData.kadar ||
+      !formData.harga
+    ) {
+      showNotification("Semua field wajib harus diisi!", "error");
+      return;
+    }
+
+    var btnTambah = document.getElementById("btnTambah");
+    btnTambah.disabled = true;
+    btnTambah.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Menyimpan...';
+
+    google.script.run
+      .withSuccessHandler(function (result) {
+        if (result.success) {
+          showNotification("✅ " + result.message + " (No: " + result.no + ")", "success");
+          bootstrap.Modal.getInstance(document.getElementById("modalTambah")).hide();
+          loadData(currentPage);
+        } else {
+          showNotification(result.message, "error");
+        }
+        btnTambah.disabled = false;
+        btnTambah.innerHTML = '<i class="bi bi-save"></i> Simpan Data';
+      })
+      .withFailureHandler(function (error) {
+        showNotification("Error: " + error.message, "error");
+        btnTambah.disabled = false;
+        btnTambah.innerHTML = '<i class="bi bi-save"></i> Simpan Data';
+      })
+      .addNewRecord(formData);
+  }
+
+  function openUploadModal(rowIndex) {
+    currentRowIndex = rowIndex;
+    google.script.run
+      .withSuccessHandler(function (result) {
+        if (result.success) {
+          var data = result.data;
+          var harga = data.harga ? "Rp " + data.harga.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "-";
+          document.getElementById("modalRecordInfo").innerHTML =
+            "<p><strong>No:</strong> " +
+            data.no +
+            "</p><p><strong>Sales:</strong> " +
+            (data.sales || "-") +
+            "</p><p><strong>Barang:</strong> " +
+            (data.namaBarang || "-") +
+            " (" +
+            (data.kadar || "-") +
+            ", " +
+            (data.berat || "-") +
+            ")</p><p><strong>Harga:</strong> " +
+            harga +
+            "</p><p><strong>Customer:</strong> " +
+            (data.namaCustomer || "-") +
+            "</p><p><strong>Kontak:</strong> " +
+            (data.infoKontak || "-") +
+            "</p>";
+
+          // Show Bootstrap modal
+          var modal = new bootstrap.Modal(document.getElementById("modalUpload"));
+          modal.show();
+        } else {
+          showNotification(result.message, "error");
+        }
+      })
+      .withFailureHandler(handleError)
+      .getRecordByRow(rowIndex);
+  }
+
+  function closeModal() {
+    document.getElementById("modalUpload").style.display = "none";
+    document.getElementById("fileInput").value = "";
+    document.getElementById("previewContainer").style.display = "none";
+    document.getElementById("btnUpload").disabled = true;
+    currentRowIndex = null;
+  }
+
+  function previewImage(event) {
+    var file = event.target.files[0];
+    if (!file) {
+      document.getElementById("btnUpload").disabled = true;
+      return;
+    }
+
+    var validTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (validTypes.indexOf(file.type) === -1) {
+      showNotification("Format file tidak valid. Gunakan JPG atau PNG.", "error");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      showNotification("Ukuran file terlalu besar. Maksimal 5MB.", "error");
+      event.target.value = "";
+      return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById("previewImage").src = e.target.result;
+      document.getElementById("previewContainer").style.display = "block";
+      document.getElementById("btnUpload").disabled = false;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleUpload() {
+    var fileInput = document.getElementById("fileInput");
+    var file = fileInput.files[0];
+    if (!file) {
+      showNotification("Pilih file terlebih dahulu!", "error");
+      return;
+    }
+
+    document.getElementById("uploadProgress").style.display = "block";
+    document.getElementById("btnUpload").disabled = true;
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var base64Data = e.target.result;
+      google.script.run
+        .withSuccessHandler(function (result) {
+          document.getElementById("uploadProgress").style.display = "none";
+          if (result.success) {
+            showNotification("✅ " + result.message, "success");
+            bootstrap.Modal.getInstance(document.getElementById("modalUpload")).hide();
+            document.getElementById("fileInput").value = "";
+            document.getElementById("previewContainer").style.display = "none";
+            document.getElementById("btnUpload").disabled = true;
+            loadData(currentPage);
+          } else {
+            showNotification(result.message, "error");
+            document.getElementById("btnUpload").disabled = false;
+          }
+        })
+        .withFailureHandler(function (error) {
+          document.getElementById("uploadProgress").style.display = "none";
+          handleError(error);
+          document.getElementById("btnUpload").disabled = false;
+        })
+        .updateWithUpload(currentRowIndex, base64Data, file.name, file.type);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Buka modal edit
+  function openFormEdit(rowIndex) {
+    google.script.run
+      .withSuccessHandler(function (result) {
+        if (result.success) {
+          var data = result.data;
+
+          // Convert tanggal from dd/MM/yyyy to yyyy-MM-dd
+          var tanggalParts = data.tanggal.split("/");
+          var tanggalISO = tanggalParts[2] + "-" + tanggalParts[1] + "-" + tanggalParts[0];
+
+          // Fill form
+          document.getElementById("editRowIndex").value = rowIndex;
+          document.getElementById("editTanggal").value = tanggalISO;
+          document.getElementById("editJam").value = data.jam;
+          document.getElementById("editSales").value = data.sales;
+          document.getElementById("editNamaCustomer").value = data.namaCustomer || "";
+          document.getElementById("editInfoKontak").value = data.infoKontak || "";
+          document.getElementById("editNamaBarang").value = data.namaBarang;
+          document.getElementById("editBerat").value = data.berat;
+          document.getElementById("editKadar").value = data.kadar;
+          document.getElementById("editHarga").value = data.harga;
+
+          // Show modal
+          var modal = new bootstrap.Modal(document.getElementById("modalEdit"));
+          modal.show();
+        } else {
+          showNotification(result.message, "error");
+        }
+      })
+      .withFailureHandler(handleError)
+      .getRecordByRow(rowIndex);
+  }
+
+  function handleEdit() {
+    var rowIndex = parseInt(document.getElementById("editRowIndex").value);
+
+    var formData = {
+      tanggal: document.getElementById("editTanggal").value,
+      jam: document.getElementById("editJam").value,
+      sales: document.getElementById("editSales").value.trim(),
+      namaCustomer: document.getElementById("editNamaCustomer").value.trim(),
+      infoKontak: document.getElementById("editInfoKontak").value.trim(),
+      namaBarang: document.getElementById("editNamaBarang").value.trim(),
+      berat: document.getElementById("editBerat").value.trim(),
+      kadar: document.getElementById("editKadar").value.trim(),
+      harga: document.getElementById("editHarga").value,
+    };
+
+    if (
+      !formData.tanggal ||
+      !formData.jam ||
+      !formData.sales ||
+      !formData.namaBarang ||
+      !formData.berat ||
+      !formData.kadar ||
+      !formData.harga
+    ) {
+      showNotification("Semua field wajib harus diisi!", "error");
+      return;
+    }
+
+    var btnEdit = document.getElementById("btnEdit");
+    btnEdit.disabled = true;
+    btnEdit.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Mengupdate...';
+
+    google.script.run
+      .withSuccessHandler(function (result) {
+        if (result.success) {
+          showNotification("✅ " + result.message, "success");
+          bootstrap.Modal.getInstance(document.getElementById("modalEdit")).hide();
+          loadData(currentPage);
+        } else {
+          showNotification(result.message, "error");
+        }
+        btnEdit.disabled = false;
+        btnEdit.innerHTML = '<i class="bi bi-check-circle"></i> Update Data';
+      })
+      .withFailureHandler(function (error) {
+        showNotification("Error: " + error.message, "error");
+        btnEdit.disabled = false;
+        btnEdit.innerHTML = '<i class="bi bi-check-circle"></i> Update Data';
+      })
+      .updateRecord(rowIndex, formData);
+  }
+
+  function confirmDelete(rowIndex) {
+    if (confirm("Apakah Anda yakin ingin menghapus foto ini?")) {
+      google.script.run
+        .withSuccessHandler(function (result) {
+          if (result.success) {
+            showNotification(result.message, "success");
+            loadData(currentPage);
+          } else {
+            showNotification(result.message, "error");
+          }
+        })
+        .withFailureHandler(handleError)
+        .deletePhoto(rowIndex);
+    }
+  }
+
+  // Alias untuk hapus foto (backward compatibility)
+  function confirmDeletePhoto(rowIndex) {
+    confirmDelete(rowIndex);
+  }
+
+  // Hapus record dari sheet
+  function confirmDeleteRecord(rowIndex) {
+    if (confirm("⚠️ Yakin hapus data ini?\n\nData dan foto (jika ada) akan dihapus permanen!")) {
+      google.script.run
+        .withSuccessHandler(function (result) {
+          if (result.success) {
+            showNotification("✅ " + result.message, "success");
+            loadData(currentPage);
+          } else {
+            showNotification(result.message, "error");
+          }
+        })
+        .withFailureHandler(handleError)
+        .deleteRecord(rowIndex);
+    }
+  }
+
+  function showLoading() {
+    document.getElementById("loadingContainer").style.display = "flex";
+    document.getElementById("tableContainer").style.display = "none";
+    document.getElementById("emptyState").style.display = "none";
+  }
+
+  function hideLoading() {
+    document.getElementById("loadingContainer").style.display = "none";
+  }
+
+  function handleError(error) {
+    showNotification("Terjadi kesalahan: " + error.message, "error");
+    hideLoading();
+  }
+
+  function showNotification(message, type) {
+    var notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.className = "notification " + type;
+    notification.style.display = "block";
+    setTimeout(function () {
+      notification.style.display = "none";
+    }, 4000);
+  }
+</script>
